@@ -26,7 +26,7 @@ typer==0.9.0
 
 # Testing
 pytest==7.4.0
-pytest-cov==4.1.0
+pytest-cov==6.1.1
 
 # Documentation
 mkdocs==1.5.2
