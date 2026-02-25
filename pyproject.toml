@@ -1,0 +1,123 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "predictive-analytics"
+version = "1.0.0"
+description = "Enterprise-grade time series forecasting and disruption prediction framework"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [
+  { name = "MontyCraig" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed",
+]
+dependencies = [
+  "numpy==1.26.4",
+  "pandas==2.2.3",
+  "matplotlib==3.9.3",
+  "seaborn==0.13.2",
+  "scikit-learn==1.6.1",
+  "scipy==1.14.1",
+  "statsmodels==0.14.4",
+  "prophet==1.1.6",
+  "pmdarima==2.0.4",
+  "pydantic==2.10.5",
+  "pydantic-settings==2.7.1",
+  "python-dotenv==1.0.1",
+  "requests==2.32.3",
+  "tqdm==4.67.1",
+  "joblib==1.4.2",
+  "rich==13.9.4",
+  "typer==0.15.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.3.4",
+  "pytest-cov==6.1.1",
+  "pytest-mock==3.14.0",
+  "hypothesis==6.120.0",
+  "mypy==1.14.1",
+  "types-requests==2.32.0.20241016",
+  "black==24.10.0",
+  "isort==5.13.2",
+  "flake8==7.1.1",
+  "pylint==3.3.6",
+  "bandit==1.8.3",
+  "pip-audit==2.7.3",
+  "pre-commit==4.0.1",
+]
+docs = [
+  "mkdocs==1.6.1",
+  "mkdocs-material==9.5.49",
+]
+
+[project.scripts]
+predictive-analytics = "predictive_analytics.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/predictive_analytics"]
+
+[tool.black]
+line-length = 99
+target-version = ["py310", "py311", "py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 99
+known_first_party = ["predictive_analytics"]
+src_paths = ["src", "tests"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+strict_equality = true
+plugins = ["pydantic.mypy"]
+
+[tool.mypy.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=predictive_analytics --cov-report=term-missing --cov-report=html --cov-fail-under=100"
+markers = [
+  "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+  "integration: marks tests as integration tests (deselect with '-m \"not integration\"')",
+]
+
+[tool.coverage.run]
+source = ["src/predictive_analytics"]
+omit = ["*/tests/*", "*/__main__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "if __name__ == .__main__.",
+  "if TYPE_CHECKING:",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B101"]
+
+[tool.flake8]
+max-line-length = 99
+extend-ignore = ["E203", "W503"]
+
+[tool.pylint.messages_control]
+disable = ["C0114", "C0115", "C0116", "R0903"]
