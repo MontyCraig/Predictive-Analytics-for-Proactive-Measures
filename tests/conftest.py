@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
-import matplotlib
-import numpy as np
-import pandas as pd
-import pytest
-from pydantic import SecretStr
+import matplotlib  # noqa: E402
 
 matplotlib.use("Agg")
 
-from predictive_analytics.config.settings import APIConfig, AppConfig, ModelConfig
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import pytest  # noqa: E402
+from pydantic import SecretStr  # noqa: E402
+
+from predictive_analytics.config.settings import APIConfig, AppConfig, ModelConfig  # noqa: E402
 
 
 @pytest.fixture()

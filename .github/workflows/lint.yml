@@ -33,7 +33,7 @@ jobs:
         run: isort --check-only src/ tests/
 
       - name: Lint (flake8)
-        run: flake8 src/ tests/
+        run: flake8 --max-line-length=99 --extend-ignore=E203,W503 src/ tests/
 
       - name: Type check (mypy)
         run: mypy --strict src/

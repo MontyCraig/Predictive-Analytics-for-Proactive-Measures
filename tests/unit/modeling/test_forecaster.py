@@ -23,7 +23,7 @@ ExponentialSmoothing) are mocked.
 from __future__ import annotations
 
 import pickle
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 from unittest.mock import MagicMock, patch
