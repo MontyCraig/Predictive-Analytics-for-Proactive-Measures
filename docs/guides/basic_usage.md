@@ -17,7 +17,7 @@ The framework provides a comprehensive solution for:
 After [installation](./installation.md), you can run the complete workflow using the main script:
 
 ```bash
-python main.py --symbol MSFT
+predictive-analytics run --symbol MSFT
 ```
 
 This will:
@@ -35,28 +35,28 @@ Here are some common command-line options to customize the workflow:
 
 ```bash
 # Analyze a different stock
-python main.py --symbol AAPL
+predictive-analytics run --symbol AAPL
 
 # Use a custom API key
-python main.py --api-key YOUR_API_KEY
+predictive-analytics run --api-key YOUR_API_KEY
 
 # Forecast a different time horizon
-python main.py --forecast-steps 60
+predictive-analytics run --forecast-steps 60
 
 # Skip data collection (use previously downloaded data)
-python main.py --skip-collection
+predictive-analytics run --skip-collection
 
 # Show plots interactively instead of saving them
-python main.py --show-plots
+predictive-analytics run --show-plots
 
 # Save outputs to a specific directory
-python main.py --output-dir /path/to/output
+predictive-analytics run --output-dir /path/to/output
 ```
 
 For a complete list of options, run:
 
 ```bash
-python main.py --help
+predictive-analytics run --help
 ```
 
 ## Step-by-Step Usage
@@ -66,7 +66,7 @@ python main.py --help
 To only collect and preprocess data:
 
 ```bash
-python -c "from utils.config import get_config; from data_collection_and_preprocessing import collect_and_preprocess_data; data = collect_and_preprocess_data(get_config(), symbol='AAPL')"
+python -c "from predictive_analytics.config.settings import get_config; from predictive_analytics.collection.preprocessing import collect_and_preprocess_data; data = collect_and_preprocess_data(get_config(), symbol='AAPL')"
 ```
 
 This will:
@@ -79,7 +79,7 @@ This will:
 To analyze the preprocessed data:
 
 ```bash
-python -c "from utils.config import get_config; from exploratory_data_analysis import TimeSeriesExplorer; import pandas as pd; data = pd.read_csv('data/preprocessed/AAPL_preprocessed.csv', index_col=0, parse_dates=True); explorer = TimeSeriesExplorer(data); explorer.run_full_analysis()"
+python -c "from predictive_analytics.config.settings import get_config; from predictive_analytics.analysis.explorer import TimeSeriesExplorer; import pandas as pd; data = pd.read_csv('data/preprocessed/AAPL_preprocessed.csv', index_col=0, parse_dates=True); explorer = TimeSeriesExplorer(data); explorer.run_full_analysis()"
 ```
 
 This will create visualizations for:
@@ -95,7 +95,7 @@ This will create visualizations for:
 To train a forecasting model:
 
 ```bash
-python -c "from utils.config import get_config; from model_selection_and_training import train_and_evaluate_model; metrics = train_and_evaluate_model(get_config(), file_path='data/preprocessed/AAPL_preprocessed.csv'); print(metrics)"
+python -c "from predictive_analytics.config.settings import get_config; from predictive_analytics.modeling.trainer import train_and_evaluate_model; metrics = train_and_evaluate_model(get_config(), file_path='data/preprocessed/AAPL_preprocessed.csv'); print(metrics)"
 ```
 
 This will:
@@ -111,7 +111,7 @@ This will:
 To generate a forecast:
 
 ```bash
-python -c "from utils.config import get_config; from forecasting_and_prediction import generate_forecast; forecast = generate_forecast(get_config(), data_path='data/preprocessed/AAPL_preprocessed.csv', steps=30); print(forecast.head())"
+python -c "from predictive_analytics.config.settings import get_config; from predictive_analytics.modeling.forecaster import generate_forecast; forecast = generate_forecast(get_config(), data_path='data/preprocessed/AAPL_preprocessed.csv', steps=30); print(forecast.head())"
 ```
 
 This will:
@@ -126,7 +126,7 @@ This will:
 To identify potential disruptions:
 
 ```bash
-python -c "from utils.config import get_config; from identifying_potential_disruptions import analyze_disruptions; disruption_df, report = analyze_disruptions(get_config(), forecast_path='output/forecasts/data/forecast_30_steps_{latest}.csv'); print(report)"
+python -c "from predictive_analytics.config.settings import get_config; from predictive_analytics.disruption.analyzer import analyze_disruptions; disruption_df, report = analyze_disruptions(get_config(), forecast_path='output/forecasts/data/forecast_30_steps_{latest}.csv'); print(report)"
 ```
 
 This will:

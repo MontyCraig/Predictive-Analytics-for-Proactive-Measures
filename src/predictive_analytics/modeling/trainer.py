@@ -583,7 +583,14 @@ class ModelTrainer:
         mse: float = float(mean_squared_error(actuals, predictions))
         rmse: float = float(np.sqrt(mse))
         r2: float = float(r2_score(actuals, predictions))
-        mape: float = float(np.mean(np.abs((actuals - predictions) / actuals)) * 100)
+        nonzero_mask: pd.Series = actuals != 0
+        if nonzero_mask.any():
+            abs_pct_error = np.abs(
+                (actuals[nonzero_mask] - predictions[nonzero_mask]) / actuals[nonzero_mask]
+            )
+            mape = float(np.mean(abs_pct_error) * 100)
+        else:
+            mape = float("nan")
 
         metrics: MetricsDict = {
             "mae": mae,

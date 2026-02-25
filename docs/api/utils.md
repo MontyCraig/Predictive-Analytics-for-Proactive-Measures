@@ -104,7 +104,7 @@ Default logger instance created when the module is imported.
 #### Basic Configuration
 
 ```python
-from utils.config import get_config
+from predictive_analytics.config.settings import get_config
 
 # Load configuration from environment variables or .env file
 config = get_config()
@@ -118,7 +118,7 @@ output_dir = config.output_dir
 #### Custom Configuration File
 
 ```python
-from utils.config import get_config
+from predictive_analytics.config.settings import get_config
 
 # Load configuration from a specific .env file
 config = get_config(env_file="custom_config.env")
@@ -134,7 +134,7 @@ if config.model.model_type == "sarima":
 #### Basic Logging
 
 ```python
-from utils.logging_config import logger
+from predictive_analytics.utils.logging_config import logger
 
 # Log messages at different levels
 logger.debug("Detailed debugging information")
@@ -148,7 +148,7 @@ logger.critical("Critical error that requires immediate attention")
 
 ```python
 import logging
-from utils.logging_config import setup_logging
+from predictive_analytics.utils.logging_config import setup_logging
 
 # Create a custom logger with specific settings
 custom_logger = setup_logging(

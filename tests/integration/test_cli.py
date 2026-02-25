@@ -15,6 +15,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from click.exceptions import Exit as ClickExit
 from typer.testing import CliRunner
 
 from predictive_analytics.cli import (
@@ -524,25 +525,21 @@ class TestStageRunners:
         expected_dir = tmp_path / "eda"
         mock_explorer.run_full_analysis.assert_called_once_with(output_dir=expected_dir)
 
-    @patch("predictive_analytics.cli.typer")
     @patch("predictive_analytics.cli.console")
     @patch("predictive_analytics.analysis.explorer.TimeSeriesExplorer")
-    def test_run_eda_no_csv_files(
+    def test_run_eda_no_csv_files_exits(
         self,
         mock_explorer_cls: MagicMock,
         mock_console: MagicMock,
-        mock_typer: MagicMock,
         tmp_path: Path,
     ) -> None:
-        # No CSV files in the directory -- data will be an empty DataFrame.
-        mock_explorer = MagicMock()
-        mock_explorer_cls.return_value = mock_explorer
-
+        # No CSV files in the directory -- should exit with code 1.
         config = MagicMock()
-        _run_eda(config, tmp_path, show_plots=True)
+        with pytest.raises(ClickExit):
+            _run_eda(config, tmp_path, show_plots=True)
 
-        # Explorer should still be called with the empty DataFrame.
-        mock_explorer_cls.assert_called_once()
+        # Explorer should NOT be called when no data is found.
+        mock_explorer_cls.assert_not_called()
 
     @patch("predictive_analytics.cli.typer")
     @patch("predictive_analytics.cli.console")

@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `Config` to `AppConfig` to avoid shadowing Python builtins
 - Replaced all `print()` calls with structured `logging` throughout codebase
 - Replaced bare `ValueError` / `FileNotFoundError` with domain-specific exceptions
-- Updated all dependencies to latest secure versions (scikit-learn 1.6.1, pydantic 2.10.5, requests 2.32.3)
+- Updated all dependencies to latest secure versions (scikit-learn 1.6.1, pydantic 2.10.5, requests 2.32.4)
 - Typed `SARIMAConfig.order` as `tuple[int, int, int]` (was bare `tuple`)
 
 ### Fixed

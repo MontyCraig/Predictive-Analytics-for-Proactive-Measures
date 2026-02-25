@@ -18,7 +18,7 @@
 |---------|-----------------|-----------------|----------|----------------|
 | scikit-learn | 1.5.0 | 1.6.1 | Medium | Dependabot alert |
 | pydantic | 2.4.0 | 2.10.5 | Medium | Dependabot alert |
-| requests | 2.32.4 | 2.32.3 | Medium | Dependabot alert |
+| requests | 2.32.3 | 2.32.4 | Medium | Dependabot alert |
 | tqdm | 4.66.3 | 4.67.1 | Low | Dependabot alert |
 | black | 24.3.0 | 24.10.0 | Medium | ReDoS vulnerability |
 

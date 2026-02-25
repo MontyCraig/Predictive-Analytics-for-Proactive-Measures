@@ -34,7 +34,7 @@ This script:
 
 Before running the examples, ensure you have:
 
-1. Installed all required dependencies (`pip install -r ../requirements.txt`)
+1. Installed all required dependencies (`pip install -e "../.[dev]"`)
 2. Created a `.env` file in the project root with your Alpha Vantage API key (`ALPHA_VANTAGE_API_KEY=your_key_here`)
 3. Completed the [installation process](../docs/guides/installation.md)
 

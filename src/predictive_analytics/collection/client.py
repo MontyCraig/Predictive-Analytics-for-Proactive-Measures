@@ -142,7 +142,9 @@ class AlphaVantageClient:
 
         try:
             _logger.info("Fetching %s data for %s", function, symbol)
-            response: requests.Response = self.session.get(self.base_url, params=params)
+            response: requests.Response = self.session.get(
+                self.base_url, params=params, timeout=30
+            )
             response.raise_for_status()
 
             data: dict = response.json()

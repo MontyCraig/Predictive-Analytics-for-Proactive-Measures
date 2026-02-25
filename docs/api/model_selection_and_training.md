@@ -130,8 +130,8 @@ Train and evaluate a time series model.
 ### Basic Usage
 
 ```python
-from utils.config import get_config
-from model_selection_and_training import train_and_evaluate_model
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.trainer import train_and_evaluate_model
 
 # Load configuration
 config = get_config()
@@ -150,8 +150,8 @@ print(f"R²: {metrics['r2']:.4f}")
 ### Custom Training with Existing Data
 
 ```python
-from utils.config import get_config
-from model_selection_and_training import ModelTrainer
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.trainer import ModelTrainer
 import pandas as pd
 
 # Load configuration
@@ -186,8 +186,8 @@ trainer.plot_results()
 ### Loading a Pre-trained Model
 
 ```python
-from utils.config import get_config
-from model_selection_and_training import ModelTrainer
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.trainer import ModelTrainer
 import pandas as pd
 
 # Load configuration

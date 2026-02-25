@@ -527,6 +527,22 @@ class TestEvaluateModel:
         metrics = split_trainer.evaluate_model()
         assert "mae" in metrics
 
+    def test_mape_with_zero_actuals(self, split_trainer: ModelTrainer) -> None:
+        """When all actuals are zero, MAPE should be NaN instead of raising."""
+        mock_fit = MagicMock()
+        n_test = len(split_trainer.test_data)
+        predictions = pd.Series(np.ones(n_test), index=split_trainer.test_data.index)
+        mock_fit.forecast.return_value = predictions
+
+        split_trainer.model_fit = mock_fit
+        split_trainer.model_meta = {"type": "exponential_smoothing"}
+
+        # Set all test actuals to zero to trigger the MAPE guard.
+        split_trainer.test_data[split_trainer.target_column] = 0.0
+
+        metrics = split_trainer.evaluate_model()
+        assert np.isnan(metrics["mape"])
+
     def test_unsupported_type_raises(self, split_trainer: ModelTrainer) -> None:
         split_trainer.model_fit = MagicMock()
         split_trainer.model_meta = {"type": "random_forest"}
