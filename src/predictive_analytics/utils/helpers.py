@@ -379,7 +379,7 @@ def save_json(
     file_path = Path(file_path)
     ensure_directory(file_path.parent)
 
-    with open(file_path, "w") as fh:
+    with open(file_path, "w", encoding="utf-8") as fh:
         if pretty:
             json.dump(data, fh, indent=2, sort_keys=True)
         else:
@@ -397,7 +397,7 @@ def load_json(file_path: Union[str, Path]) -> Any:
     """
     file_path = Path(file_path)
 
-    with open(file_path, "r") as fh:
+    with open(file_path, "r", encoding="utf-8") as fh:
         return json.load(fh)
 
 

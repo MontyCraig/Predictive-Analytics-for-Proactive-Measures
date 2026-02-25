@@ -638,7 +638,7 @@ def analyze_disruptions(
 
     if report["significant_disruption_dates"]:
         logger.info("Significant disruption dates:")
-        for date in report["significant_disruption_dates"]:
+        for date in report["significant_disruption_dates"]:  # type: ignore[union-attr]
             if hasattr(date, "strftime"):
                 logger.info("  - %s", date.strftime("%Y-%m-%d"))
             else:
@@ -669,11 +669,11 @@ def analyze_disruptions(
         report_copy: Dict[str, Any] = dict(report)
         report_copy["significant_disruption_dates"] = [
             d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else str(d)
-            for d in report["significant_disruption_dates"]
+            for d in report["significant_disruption_dates"]  # type: ignore[union-attr]
         ]
 
         report_path: Path = disruptions_dir / f"disruption_report_{timestamp}.json"
-        with open(report_path, "w") as fh:
+        with open(report_path, "w", encoding="utf-8") as fh:
             json.dump(report_copy, fh, indent=2)
         logger.info("Disruption report saved to %s", report_path)
 

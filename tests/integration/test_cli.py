@@ -444,13 +444,13 @@ class TestRunCommandOptions:
         )
         assert result.exit_code == 0
         mock_collection.assert_called_once()
-        # The api_key argument should be "my-test-key"
+        # Verify the symbol was passed correctly
         call_args = mock_collection.call_args[0]
-        assert "my-test-key" in call_args
+        assert "AAPL" in call_args
 
 
 # ---------------------------------------------------------------------------
-# Direct tests of the stage runner functions (cover lines 88-211)
+# Direct tests of the stage runner functions (cover lines 69-201)
 # ---------------------------------------------------------------------------
 
 
@@ -465,15 +465,13 @@ class TestStageRunners:
         mock_collect: MagicMock,
         mock_console: MagicMock,
         mock_typer: MagicMock,
-        tmp_path: Path,
     ) -> None:
         config = MagicMock()
-        _run_collection("AAPL", "fake-key", tmp_path, config)
+        _run_collection(config, "AAPL")
         mock_collect.assert_called_once_with(
-            symbol="AAPL",
-            api_key="fake-key",
-            output_dir=tmp_path,
             config=config,
+            symbol="AAPL",
+            save=True,
         )
 
     @patch("predictive_analytics.cli.typer")
@@ -486,15 +484,65 @@ class TestStageRunners:
         mock_typer: MagicMock,
         tmp_path: Path,
     ) -> None:
+        # Create a fake preprocessed CSV so output_path.glob() finds it.
+        csv_file = tmp_path / "test_preprocessed.csv"
+        csv_file.write_text("date,close\n2023-01-01,100\n2023-01-02,101\n")
+
         mock_explorer = MagicMock()
         mock_explorer_cls.return_value = mock_explorer
-        _run_eda("MSFT", tmp_path, True)
-        mock_explorer_cls.assert_called_once_with(
-            symbol="MSFT",
-            data_dir=tmp_path,
-            show_plots=True,
-        )
-        mock_explorer.run.assert_called_once()
+
+        config = MagicMock()
+        _run_eda(config, tmp_path, show_plots=True)
+
+        mock_explorer_cls.assert_called_once()
+        call_kwargs = mock_explorer_cls.call_args[1]
+        assert call_kwargs["target_column"] == "close"
+        # show_plots=True means output_dir=None (interactive mode)
+        mock_explorer.run_full_analysis.assert_called_once_with(output_dir=None)
+
+    @patch("predictive_analytics.cli.typer")
+    @patch("predictive_analytics.cli.console")
+    @patch("predictive_analytics.analysis.explorer.TimeSeriesExplorer")
+    def test_run_eda_save_mode(
+        self,
+        mock_explorer_cls: MagicMock,
+        mock_console: MagicMock,
+        mock_typer: MagicMock,
+        tmp_path: Path,
+    ) -> None:
+        # Create a fake preprocessed CSV so output_path.glob() finds it.
+        csv_file = tmp_path / "test_preprocessed.csv"
+        csv_file.write_text("date,close\n2023-01-01,100\n2023-01-02,101\n")
+
+        mock_explorer = MagicMock()
+        mock_explorer_cls.return_value = mock_explorer
+
+        config = MagicMock()
+        _run_eda(config, tmp_path, show_plots=False)
+
+        # show_plots=False means output_dir=output_path / "eda"
+        expected_dir = tmp_path / "eda"
+        mock_explorer.run_full_analysis.assert_called_once_with(output_dir=expected_dir)
+
+    @patch("predictive_analytics.cli.typer")
+    @patch("predictive_analytics.cli.console")
+    @patch("predictive_analytics.analysis.explorer.TimeSeriesExplorer")
+    def test_run_eda_no_csv_files(
+        self,
+        mock_explorer_cls: MagicMock,
+        mock_console: MagicMock,
+        mock_typer: MagicMock,
+        tmp_path: Path,
+    ) -> None:
+        # No CSV files in the directory -- data will be an empty DataFrame.
+        mock_explorer = MagicMock()
+        mock_explorer_cls.return_value = mock_explorer
+
+        config = MagicMock()
+        _run_eda(config, tmp_path, show_plots=True)
+
+        # Explorer should still be called with the empty DataFrame.
+        mock_explorer_cls.assert_called_once()
 
     @patch("predictive_analytics.cli.typer")
     @patch("predictive_analytics.cli.console")
@@ -506,11 +554,9 @@ class TestStageRunners:
         mock_typer: MagicMock,
         tmp_path: Path,
     ) -> None:
-        _run_training("GOOG", tmp_path)
-        mock_train.assert_called_once_with(
-            symbol="GOOG",
-            data_dir=tmp_path,
-        )
+        config = MagicMock()
+        _run_training(config, tmp_path)
+        mock_train.assert_called_once_with(config=config)
 
     @patch("predictive_analytics.cli.typer")
     @patch("predictive_analytics.cli.console")
@@ -520,14 +566,13 @@ class TestStageRunners:
         mock_forecast: MagicMock,
         mock_console: MagicMock,
         mock_typer: MagicMock,
-        tmp_path: Path,
     ) -> None:
-        _run_forecasting("TSLA", tmp_path, 60, False)
+        config = MagicMock()
+        _run_forecasting(config, 60, False)
         mock_forecast.assert_called_once_with(
-            symbol="TSLA",
-            data_dir=tmp_path,
+            config=config,
             steps=60,
-            show_plots=False,
+            plot=False,
         )
 
     @patch("predictive_analytics.cli.typer")
@@ -538,11 +583,10 @@ class TestStageRunners:
         mock_analyze: MagicMock,
         mock_console: MagicMock,
         mock_typer: MagicMock,
-        tmp_path: Path,
     ) -> None:
-        _run_disruptions("AMD", tmp_path, True)
+        config = MagicMock()
+        _run_disruptions(config, True)
         mock_analyze.assert_called_once_with(
-            symbol="AMD",
-            data_dir=tmp_path,
-            show_plots=True,
+            config=config,
+            plot=True,
         )

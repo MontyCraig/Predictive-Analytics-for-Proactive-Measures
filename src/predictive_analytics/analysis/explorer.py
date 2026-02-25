@@ -395,28 +395,28 @@ class TimeSeriesExplorer:
         """
         _logger.info("Starting full exploratory analysis")
 
-        save_mode: bool = output_dir is not None
-        if save_mode:
-            output_dir = Path(output_dir)
-            output_dir.mkdir(parents=True, exist_ok=True)
-            _logger.info("Saving plots to %s", output_dir)
+        _save_dir: Optional[Path] = None
+        if output_dir is not None:
+            _save_dir = Path(output_dir)
+            _save_dir.mkdir(parents=True, exist_ok=True)
+            _logger.info("Saving plots to %s", _save_dir)
 
         # Time series plot.
         self.plot_time_series()
-        if save_mode:
-            plt.savefig(output_dir / "time_series_plot.png")
+        if _save_dir is not None:
+            plt.savefig(_save_dir / "time_series_plot.png")
             plt.close()
 
         # Seasonal decomposition.
         self.plot_seasonal_decomposition()
-        if save_mode:
-            plt.savefig(output_dir / "seasonal_decomposition.png")
+        if _save_dir is not None:
+            plt.savefig(_save_dir / "seasonal_decomposition.png")
             plt.close()
 
         # ACF and PACF.
         self.plot_acf_pacf()
-        if save_mode:
-            plt.savefig(output_dir / "acf_pacf.png")
+        if _save_dir is not None:
+            plt.savefig(_save_dir / "acf_pacf.png")
             plt.close()
 
         # Stationarity test.
@@ -424,32 +424,32 @@ class TimeSeriesExplorer:
 
         # Rolling statistics.
         self.plot_rolling_statistics()
-        if save_mode:
-            plt.savefig(output_dir / "rolling_statistics.png")
+        if _save_dir is not None:
+            plt.savefig(_save_dir / "rolling_statistics.png")
             plt.close()
 
         # Distribution.
         self.plot_distribution()
-        if save_mode:
-            plt.savefig(output_dir / "distribution.png")
+        if _save_dir is not None:
+            plt.savefig(_save_dir / "distribution.png")
             plt.close()
 
         # Box plots by month.
         self.plot_box_plots()
-        if save_mode:
-            plt.savefig(output_dir / "box_plots_month.png")
+        if _save_dir is not None:
+            plt.savefig(_save_dir / "box_plots_month.png")
             plt.close()
 
         # Correlation heatmap.
         self.plot_heatmap()
-        if save_mode:
-            plt.savefig(output_dir / "correlation_heatmap.png")
+        if _save_dir is not None:
+            plt.savefig(_save_dir / "correlation_heatmap.png")
             plt.close()
 
         # Lag scatter plots.
         self.plot_lag_scatter()
-        if save_mode:
-            plt.savefig(output_dir / "lag_scatter.png")
+        if _save_dir is not None:
+            plt.savefig(_save_dir / "lag_scatter.png")
             plt.close()
 
         _logger.info("Full exploratory analysis completed")

@@ -411,7 +411,7 @@ def get_config(env_file: Optional[str] = None) -> AppConfig:
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
 
     api_config = APIConfig(
-        alpha_vantage_api_key=api_key,
+        alpha_vantage_api_key=SecretStr(api_key),
         alpha_vantage_base_url=os.getenv(
             "ALPHA_VANTAGE_BASE_URL",
             "https://www.alphavantage.co/query",
