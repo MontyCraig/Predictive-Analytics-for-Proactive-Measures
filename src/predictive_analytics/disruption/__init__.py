@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from predictive_analytics.disruption.analyzer import (
-    DisruptionAnalyzer,
-    analyze_disruptions,
-)
+from predictive_analytics.disruption.analyzer import DisruptionAnalyzer, analyze_disruptions
 
 __all__ = [
     "DisruptionAnalyzer",

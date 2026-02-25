@@ -21,16 +21,12 @@ import pytest
 import requests
 
 from predictive_analytics.collection.client import (
+    _FUNCTION_TO_KEY,
     AlphaVantageClient,
     TimeSeriesData,
-    _FUNCTION_TO_KEY,
 )
 from predictive_analytics.config.settings import AppConfig
-from predictive_analytics.exceptions import (
-    APIRateLimitError,
-    DataCollectionError,
-)
-
+from predictive_analytics.exceptions import APIRateLimitError, DataCollectionError
 
 # ---------------------------------------------------------------------------
 # TimeSeriesData model

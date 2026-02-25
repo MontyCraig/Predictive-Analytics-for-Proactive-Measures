@@ -17,20 +17,19 @@ import pytest
 from pydantic import SecretStr, ValidationError
 
 from predictive_analytics.config.settings import (
+    DATA_DIR,
+    MODELS_DIR,
+    ROOT_DIR,
     APIConfig,
     AppConfig,
     AutoARIMAConfig,
-    DATA_DIR,
     ExponentialSmoothingConfig,
-    MODELS_DIR,
     ModelConfig,
     ProphetConfig,
-    ROOT_DIR,
     SARIMAConfig,
     get_config,
 )
 from predictive_analytics.exceptions import ConfigurationError
-
 
 # ---------------------------------------------------------------------------
 # Directory constants
@@ -337,15 +336,17 @@ class TestGetConfig:
         return base
 
     def test_missing_api_key_raises_configuration_error(self) -> None:
-        with patch.dict("os.environ", {}, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", {}, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             with pytest.raises(ConfigurationError, match="API key"):
                 get_config()
 
     def test_default_sarima_config(self) -> None:
-        with patch.dict("os.environ", self._env(), clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", self._env(), clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.model.model_type == "sarima"
@@ -363,8 +364,9 @@ class TestGetConfig:
                 "PROPHET_SEASONALITY_PRIOR_SCALE": "5.0",
             }
         )
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.model.model_type == "prophet"
@@ -390,8 +392,9 @@ class TestGetConfig:
                 "AUTO_ARIMA_STEPWISE": "False",
             }
         )
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.model.model_type == "auto_arima"
@@ -416,8 +419,9 @@ class TestGetConfig:
                 "EXP_SMOOTHING_DAMPED_TREND": "True",
             }
         )
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.model.model_type == "exp_smoothing"
@@ -438,8 +442,9 @@ class TestGetConfig:
                 "EXP_SMOOTHING_DAMPED_TREND": "False",
             }
         )
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.exp_smoothing is not None
@@ -463,8 +468,9 @@ class TestGetConfig:
                 "SARIMA_ENFORCE_INVERTIBILITY": "False",
             }
         )
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.sarima is not None
@@ -474,19 +480,19 @@ class TestGetConfig:
             assert cfg.sarima.enforce_invertibility is False
 
     def test_custom_base_url_from_env(self) -> None:
-        env = self._env(
-            {"ALPHA_VANTAGE_BASE_URL": "https://custom.api/v1"}
-        )
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        env = self._env({"ALPHA_VANTAGE_BASE_URL": "https://custom.api/v1"})
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.api.alpha_vantage_base_url == "https://custom.api/v1"
 
     def test_custom_output_dir_and_log_level(self) -> None:
         env = self._env({"OUTPUT_DIR": "/tmp/out", "LOG_LEVEL": "DEBUG"})
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.output_dir == "/tmp/out"
@@ -494,16 +500,18 @@ class TestGetConfig:
 
     def test_data_file_from_env(self) -> None:
         env = self._env({"DATA_FILE": "/data/prices.csv"})
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.data_file == "/data/prices.csv"
 
     def test_train_test_sizes_from_env(self) -> None:
         env = self._env({"TRAIN_SIZE": "0.7", "TEST_SIZE": "0.3"})
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.model.train_size == 0.7
@@ -511,40 +519,45 @@ class TestGetConfig:
 
     def test_invalid_train_test_split_raises(self) -> None:
         env = self._env({"TRAIN_SIZE": "0.5", "TEST_SIZE": "0.3"})
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             with pytest.raises(ConfigurationError):
                 get_config()
 
     def test_env_file_passed_to_load_dotenv(self) -> None:
         env = self._env()
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
-        ) as mock_load:
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv") as mock_load,
+        ):
             get_config(env_file="/path/to/.env")
             mock_load.assert_called_once_with("/path/to/.env")
 
     def test_no_env_file_calls_load_dotenv_without_args(self) -> None:
         env = self._env()
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
-        ) as mock_load:
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv") as mock_load,
+        ):
             get_config()
             mock_load.assert_called_once_with()
 
     def test_random_state_from_env(self) -> None:
         env = self._env({"RANDOM_STATE": "99"})
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.model.random_state == 99
 
     def test_model_type_case_insensitive(self) -> None:
         env = self._env({"MODEL_TYPE": "SARIMA"})
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
         ):
             cfg = get_config()
             assert cfg.model.model_type == "sarima"
@@ -552,11 +565,13 @@ class TestGetConfig:
     def test_generic_exception_during_app_config_build(self) -> None:
         """Trigger the generic except-Exception catch in get_config (line 546)."""
         env = self._env()
-        with patch.dict("os.environ", env, clear=True), patch(
-            "predictive_analytics.config.settings.load_dotenv"
-        ), patch(
-            "predictive_analytics.config.settings.AppConfig",
-            side_effect=TypeError("unexpected type"),
+        with (
+            patch.dict("os.environ", env, clear=True),
+            patch("predictive_analytics.config.settings.load_dotenv"),
+            patch(
+                "predictive_analytics.config.settings.AppConfig",
+                side_effect=TypeError("unexpected type"),
+            ),
         ):
             with pytest.raises(ConfigurationError, match="Failed to build"):
                 get_config()

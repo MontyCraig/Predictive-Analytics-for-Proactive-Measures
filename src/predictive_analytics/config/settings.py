@@ -19,14 +19,7 @@ from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    SecretStr,
-    field_validator,
-    model_validator,
-)
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator, model_validator
 
 from predictive_analytics.exceptions import ConfigurationError
 
@@ -448,39 +441,22 @@ def get_config(env_file: Optional[str] = None) -> AppConfig:
                 int(os.getenv("SARIMA_S", "12")),
             ),
             enforce_stationarity=(
-                os.getenv("SARIMA_ENFORCE_STATIONARITY", "True").lower()
-                == "true"
+                os.getenv("SARIMA_ENFORCE_STATIONARITY", "True").lower() == "true"
             ),
             enforce_invertibility=(
-                os.getenv("SARIMA_ENFORCE_INVERTIBILITY", "True").lower()
-                == "true"
+                os.getenv("SARIMA_ENFORCE_INVERTIBILITY", "True").lower() == "true"
             ),
         )
 
     prophet_config: ProphetConfig | None = None
     if model_type == "prophet":
         prophet_config = ProphetConfig(
-            yearly_seasonality=(
-                os.getenv("PROPHET_YEARLY_SEASONALITY", "True").lower()
-                == "true"
-            ),
-            weekly_seasonality=(
-                os.getenv("PROPHET_WEEKLY_SEASONALITY", "True").lower()
-                == "true"
-            ),
-            daily_seasonality=(
-                os.getenv("PROPHET_DAILY_SEASONALITY", "False").lower()
-                == "true"
-            ),
-            seasonality_mode=os.getenv(
-                "PROPHET_SEASONALITY_MODE", "additive"
-            ),
-            changepoint_prior_scale=float(
-                os.getenv("PROPHET_CHANGEPOINT_PRIOR_SCALE", "0.05")
-            ),
-            seasonality_prior_scale=float(
-                os.getenv("PROPHET_SEASONALITY_PRIOR_SCALE", "10.0")
-            ),
+            yearly_seasonality=(os.getenv("PROPHET_YEARLY_SEASONALITY", "True").lower() == "true"),
+            weekly_seasonality=(os.getenv("PROPHET_WEEKLY_SEASONALITY", "True").lower() == "true"),
+            daily_seasonality=(os.getenv("PROPHET_DAILY_SEASONALITY", "False").lower() == "true"),
+            seasonality_mode=os.getenv("PROPHET_SEASONALITY_MODE", "additive"),
+            changepoint_prior_scale=float(os.getenv("PROPHET_CHANGEPOINT_PRIOR_SCALE", "0.05")),
+            seasonality_prior_scale=float(os.getenv("PROPHET_SEASONALITY_PRIOR_SCALE", "10.0")),
         )
 
     auto_arima_config: AutoARIMAConfig | None = None
@@ -493,29 +469,19 @@ def get_config(env_file: Optional[str] = None) -> AppConfig:
             max_D=int(os.getenv("AUTO_ARIMA_MAX_D_SEASONAL", "1")),
             max_Q=int(os.getenv("AUTO_ARIMA_MAX_Q_SEASONAL", "2")),
             m=int(os.getenv("AUTO_ARIMA_M", "7")),
-            seasonal=(
-                os.getenv("AUTO_ARIMA_SEASONAL", "True").lower() == "true"
-            ),
-            stepwise=(
-                os.getenv("AUTO_ARIMA_STEPWISE", "True").lower() == "true"
-            ),
+            seasonal=(os.getenv("AUTO_ARIMA_SEASONAL", "True").lower() == "true"),
+            stepwise=(os.getenv("AUTO_ARIMA_STEPWISE", "True").lower() == "true"),
         )
 
     exp_smoothing_config: ExponentialSmoothingConfig | None = None
     if model_type == "exp_smoothing":
         trend_raw: str = os.getenv("EXP_SMOOTHING_TREND", "None")
-        trend_val: str | None = (
-            None if trend_raw.lower() == "none" else trend_raw
-        )
+        trend_val: str | None = None if trend_raw.lower() == "none" else trend_raw
 
         seasonal_raw: str = os.getenv("EXP_SMOOTHING_SEASONAL", "None")
-        seasonal_val: str | None = (
-            None if seasonal_raw.lower() == "none" else seasonal_raw
-        )
+        seasonal_val: str | None = None if seasonal_raw.lower() == "none" else seasonal_raw
 
-        periods_raw: str = os.getenv(
-            "EXP_SMOOTHING_SEASONAL_PERIODS", "None"
-        )
+        periods_raw: str = os.getenv("EXP_SMOOTHING_SEASONAL_PERIODS", "None")
         seasonal_periods_val: int | None = (
             None if periods_raw.lower() == "none" else int(periods_raw)
         )
@@ -524,10 +490,7 @@ def get_config(env_file: Optional[str] = None) -> AppConfig:
             trend=trend_val,
             seasonal=seasonal_val,
             seasonal_periods=seasonal_periods_val,
-            damped_trend=(
-                os.getenv("EXP_SMOOTHING_DAMPED_TREND", "False").lower()
-                == "true"
-            ),
+            damped_trend=(os.getenv("EXP_SMOOTHING_DAMPED_TREND", "False").lower() == "true"),
         )
 
     # ---- Assemble top-level config -----------------------------------------
@@ -544,8 +507,6 @@ def get_config(env_file: Optional[str] = None) -> AppConfig:
             log_level=log_level,
         )
     except Exception as exc:
-        raise ConfigurationError(
-            f"Failed to build application configuration: {exc}"
-        ) from exc
+        raise ConfigurationError(f"Failed to build application configuration: {exc}") from exc
 
     return config

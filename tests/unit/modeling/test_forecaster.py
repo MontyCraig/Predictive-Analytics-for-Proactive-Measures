@@ -32,21 +32,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from predictive_analytics.config.settings import (
-    APIConfig,
-    AppConfig,
-    ModelConfig,
-    SARIMAConfig,
-)
-from predictive_analytics.exceptions import (
-    ForecastingError,
-    ModelNotTrainedError,
-)
-from predictive_analytics.modeling.forecaster import (
-    TimeSeriesForecaster,
-    generate_forecast,
-)
-
+from predictive_analytics.config.settings import APIConfig, AppConfig, ModelConfig, SARIMAConfig
+from predictive_analytics.exceptions import ForecastingError, ModelNotTrainedError
+from predictive_analytics.modeling.forecaster import TimeSeriesForecaster, generate_forecast
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -137,9 +125,7 @@ def _make_sarima_mock_fit(n_steps: int = 10) -> MagicMock:
     mock_fit = MagicMock()
     forecast_result = MagicMock()
     forecast_result.predicted_mean = pd.Series(np.ones(n_steps))
-    conf_int = pd.DataFrame(
-        {"lower": np.zeros(n_steps), "upper": np.ones(n_steps) * 2}
-    )
+    conf_int = pd.DataFrame({"lower": np.zeros(n_steps), "upper": np.ones(n_steps) * 2})
     forecast_result.conf_int.return_value = conf_int
     mock_fit.get_forecast.return_value = forecast_result
     return mock_fit
@@ -169,16 +155,12 @@ class TestTimeSeriesForecasterInit:
         assert fc.model_fit is None
         assert fc.model_meta is None
 
-    def test_init_with_model_path(
-        self, app_config: AppConfig, model_file: Path
-    ) -> None:
+    def test_init_with_model_path(self, app_config: AppConfig, model_file: Path) -> None:
         fc = TimeSeriesForecaster(app_config, model_path=model_file)
         assert fc.model_fit is not None
         assert fc.model_meta["type"] == "sarima"
 
-    def test_init_with_data(
-        self, app_config: AppConfig, sample_df: pd.DataFrame
-    ) -> None:
+    def test_init_with_data(self, app_config: AppConfig, sample_df: pd.DataFrame) -> None:
         fc = TimeSeriesForecaster(app_config, data=sample_df)
         assert fc.data is sample_df
 
@@ -189,18 +171,14 @@ class TestTimeSeriesForecasterInit:
 
 
 class TestLoadModel:
-    def test_load_dict_format(
-        self, app_config: AppConfig, model_file: Path
-    ) -> None:
+    def test_load_dict_format(self, app_config: AppConfig, model_file: Path) -> None:
         fc = TimeSeriesForecaster(app_config)
         fc.load_model(model_file)
         assert fc.model_fit is not None
         assert fc.model_meta["type"] == "sarima"
         assert fc.training_end_date == datetime(2023, 4, 10)
 
-    def test_load_legacy_format(
-        self, app_config: AppConfig, tmp_path: Path
-    ) -> None:
+    def test_load_legacy_format(self, app_config: AppConfig, tmp_path: Path) -> None:
         legacy_path = tmp_path / "legacy.pkl"
         with open(legacy_path, "wb") as fh:
             pickle.dump("bare_model", fh)
@@ -215,9 +193,7 @@ class TestLoadModel:
         with pytest.raises(FileNotFoundError, match="Model file not found"):
             fc.load_model("/nonexistent/model.pkl")
 
-    def test_corrupt_file_raises(
-        self, app_config: AppConfig, tmp_path: Path
-    ) -> None:
+    def test_corrupt_file_raises(self, app_config: AppConfig, tmp_path: Path) -> None:
         bad_file = tmp_path / "corrupt.pkl"
         bad_file.write_bytes(b"not a pickle")
         fc = TimeSeriesForecaster(app_config)
@@ -231,9 +207,7 @@ class TestLoadModel:
 
 
 class TestLoadData:
-    def test_success(
-        self, app_config: AppConfig, sample_df: pd.DataFrame, tmp_path: Path
-    ) -> None:
+    def test_success(self, app_config: AppConfig, sample_df: pd.DataFrame, tmp_path: Path) -> None:
         csv_path = tmp_path / "data.csv"
         sample_df.to_csv(csv_path)
 
@@ -282,9 +256,7 @@ class TestForecast:
         assert "lower_bound" in result.columns
         assert "upper_bound" in result.columns
 
-    def test_prophet_forecast(
-        self, app_config: AppConfig, sample_df: pd.DataFrame
-    ) -> None:
+    def test_prophet_forecast(self, app_config: AppConfig, sample_df: pd.DataFrame) -> None:
         mock_fit = MagicMock()
         forecast_out = pd.DataFrame(
             {
@@ -327,9 +299,7 @@ class TestForecast:
         result = fc.forecast(steps=30, exog_features=exog)
         assert len(result) == 30
 
-    def test_auto_arima_forecast(
-        self, app_config: AppConfig, sample_df: pd.DataFrame
-    ) -> None:
+    def test_auto_arima_forecast(self, app_config: AppConfig, sample_df: pd.DataFrame) -> None:
         mock_fit = MagicMock()
         pred = np.ones(30)
         pred_ci = np.column_stack([pred - 1, pred + 1])
@@ -416,9 +386,7 @@ class TestForecast:
         assert result["lower_bound"].iloc[0] == pytest.approx(90.0, abs=0.1)
         assert result["upper_bound"].iloc[0] == pytest.approx(110.0, abs=0.1)
 
-    def test_unsupported_model_type(
-        self, app_config: AppConfig, sample_df: pd.DataFrame
-    ) -> None:
+    def test_unsupported_model_type(self, app_config: AppConfig, sample_df: pd.DataFrame) -> None:
         fc = TimeSeriesForecaster(app_config, data=sample_df)
         fc.model_fit = MagicMock()
         fc.model_meta = {"type": "random_forest"}
@@ -440,9 +408,7 @@ class TestForecast:
         with pytest.raises(ForecastingError, match="Forecast generation failed"):
             fc.forecast()
 
-    def test_forecast_no_data_uses_training_end_date(
-        self, app_config: AppConfig
-    ) -> None:
+    def test_forecast_no_data_uses_training_end_date(self, app_config: AppConfig) -> None:
         mock_fit = MagicMock()
         forecast_result = MagicMock()
         forecast_result.predicted_mean = pd.Series(np.ones(10))
@@ -458,9 +424,7 @@ class TestForecast:
         result = fc.forecast(steps=10)
         assert len(result) == 10
 
-    def test_forecast_no_data_no_training_date_uses_yesterday(
-        self, app_config: AppConfig
-    ) -> None:
+    def test_forecast_no_data_no_training_date_uses_yesterday(self, app_config: AppConfig) -> None:
         mock_fit = MagicMock()
         forecast_result = MagicMock()
         forecast_result.predicted_mean = pd.Series(np.ones(5))
@@ -476,9 +440,7 @@ class TestForecast:
         result = fc.forecast(steps=5)
         assert len(result) == 5
 
-    def test_forecast_infer_freq_fallback(
-        self, app_config: AppConfig
-    ) -> None:
+    def test_forecast_infer_freq_fallback(self, app_config: AppConfig) -> None:
         """When pd.infer_freq returns None, the fallback should be used."""
         # Create data with irregular dates that infer_freq can't handle
         dates = pd.to_datetime(["2023-01-01", "2023-01-02", "2023-01-04", "2023-01-05"])
@@ -539,9 +501,7 @@ class TestInferFrequencyFallback:
 
     def test_unknown_falls_back_to_d(self) -> None:
         """A 3-day interval doesn't match any known mapping."""
-        idx = pd.to_datetime(
-            ["2023-01-01", "2023-01-04", "2023-01-07", "2023-01-10"]
-        )
+        idx = pd.to_datetime(["2023-01-01", "2023-01-04", "2023-01-07", "2023-01-10"])
         result = TimeSeriesForecaster._infer_frequency_fallback(idx)
         assert result == "D"
 
@@ -600,9 +560,7 @@ class TestDetectAnomalies:
         forecaster: TimeSeriesForecaster,
         forecast_df: pd.DataFrame,
     ) -> None:
-        actual = pd.Series(
-            np.random.default_rng(1).normal(100, 2, 30), index=forecast_df.index
-        )
+        actual = pd.Series(np.random.default_rng(1).normal(100, 2, 30), index=forecast_df.index)
         result = forecaster.detect_anomalies(forecast_df, actual_values=actual)
 
         assert "actual" in result.columns
@@ -626,13 +584,9 @@ class TestDetectAnomalies:
         forecaster: TimeSeriesForecaster,
         forecast_df: pd.DataFrame,
     ) -> None:
-        actual = pd.Series(
-            np.random.default_rng(1).normal(100, 50, 30), index=forecast_df.index
-        )
+        actual = pd.Series(np.random.default_rng(1).normal(100, 50, 30), index=forecast_df.index)
         # A very high threshold should produce no anomalies
-        result = forecaster.detect_anomalies(
-            forecast_df, actual_values=actual, threshold=100.0
-        )
+        result = forecaster.detect_anomalies(forecast_df, actual_values=actual, threshold=100.0)
         assert result["is_anomaly"].sum() == 0
 
 

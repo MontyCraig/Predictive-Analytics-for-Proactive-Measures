@@ -29,10 +29,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from predictive_analytics.config.logging import logger, setup_logging
 from predictive_analytics.config.settings import AppConfig
-from predictive_analytics.exceptions import (
-    APIRateLimitError,
-    DataCollectionError,
-)
+from predictive_analytics.exceptions import APIRateLimitError, DataCollectionError
 
 __all__: list[str] = [
     "TimeSeriesData",
@@ -67,18 +64,10 @@ class TimeSeriesData(BaseModel):
     )
 
     symbol: str = Field(..., description="Stock symbol or identifier")
-    interval: str = Field(
-        ..., description="Data interval (daily, weekly, monthly)"
-    )
-    time_series: dict[str, dict[str, str]] = Field(
-        ..., description="Time series data points"
-    )
-    last_refreshed: datetime = Field(
-        ..., description="Last data refresh timestamp"
-    )
-    output_size: str = Field(
-        ..., description="Output size (compact or full)"
-    )
+    interval: str = Field(..., description="Data interval (daily, weekly, monthly)")
+    time_series: dict[str, dict[str, str]] = Field(..., description="Time series data points")
+    last_refreshed: datetime = Field(..., description="Last data refresh timestamp")
+    output_size: str = Field(..., description="Output size (compact or full)")
     time_zone: str = Field(..., description="Time zone of the data")
 
 
@@ -155,19 +144,14 @@ class AlphaVantageClient:
 
         try:
             _logger.info("Fetching %s data for %s", function, symbol)
-            response: requests.Response = self.session.get(
-                self.base_url, params=params
-            )
+            response: requests.Response = self.session.get(self.base_url, params=params)
             response.raise_for_status()
 
             data: dict = response.json()
 
             # Handle API rate-limit note.
             if "Note" in data:
-                _logger.warning(
-                    "API call frequency limit reached. "
-                    "Waiting for 60 seconds."
-                )
+                _logger.warning("API call frequency limit reached. " "Waiting for 60 seconds.")
                 raise APIRateLimitError(
                     "Alpha Vantage API rate limit reached. "
                     "Consider upgrading your plan or reducing request "
@@ -180,30 +164,20 @@ class AlphaVantageClient:
             elif function in _FUNCTION_TO_KEY:
                 time_series_key = _FUNCTION_TO_KEY[function]
             else:
-                raise DataCollectionError(
-                    f"Unsupported API function: {function}"
-                )
+                raise DataCollectionError(f"Unsupported API function: {function}")
 
             if time_series_key not in data:
-                _logger.error(
-                    "Unexpected API response format: %s", data
-                )
+                _logger.error("Unexpected API response format: %s", data)
                 raise DataCollectionError(
-                    f"Time series key '{time_series_key}' not found in "
-                    f"response"
+                    f"Time series key '{time_series_key}' not found in " f"response"
                 )
 
             # Convert to DataFrame.
-            df: pd.DataFrame = pd.DataFrame.from_dict(
-                data[time_series_key], orient="index"
-            )
+            df: pd.DataFrame = pd.DataFrame.from_dict(data[time_series_key], orient="index")
 
             # Rename columns to remove numeric prefixes
             # (e.g. "1. open" -> "open").
-            df.columns = [
-                col.split(". ")[1] if ". " in col else col
-                for col in df.columns
-            ]
+            df.columns = [col.split(". ")[1] if ". " in col else col for col in df.columns]
 
             # Convert data types.
             for col in df.columns:
@@ -224,23 +198,16 @@ class AlphaVantageClient:
             return df
 
         except requests.RequestException as exc:
-            _logger.error(
-                "Error fetching data from Alpha Vantage: %s", exc
-            )
+            _logger.error("Error fetching data from Alpha Vantage: %s", exc)
             raise DataCollectionError(
-                f"Network error while fetching data from Alpha Vantage: "
-                f"{exc}"
+                f"Network error while fetching data from Alpha Vantage: " f"{exc}"
             ) from exc
         except (APIRateLimitError, DataCollectionError):
             # Re-raise domain exceptions without wrapping.
             raise
         except (ValueError, KeyError) as exc:
-            _logger.error(
-                "Error processing Alpha Vantage response: %s", exc
-            )
-            raise DataCollectionError(
-                f"Failed to process Alpha Vantage response: {exc}"
-            ) from exc
+            _logger.error("Error processing Alpha Vantage response: %s", exc)
+            raise DataCollectionError(f"Failed to process Alpha Vantage response: {exc}") from exc
 
     def save_data(
         self,
@@ -263,9 +230,5 @@ class AlphaVantageClient:
             df.to_csv(resolved_path)
             _logger.info("Data saved to %s", resolved_path)
         except IOError as exc:
-            _logger.error(
-                "Error saving data to %s: %s", file_path, exc
-            )
-            raise DataCollectionError(
-                f"Failed to save data to {file_path}: {exc}"
-            ) from exc
+            _logger.error("Error saving data to %s: %s", file_path, exc)
+            raise DataCollectionError(f"Failed to save data to {file_path}: {exc}") from exc

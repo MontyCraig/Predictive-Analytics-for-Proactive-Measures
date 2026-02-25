@@ -23,7 +23,6 @@ import pytest
 from predictive_analytics.analysis.explorer import TimeSeriesExplorer, load_data
 from predictive_analytics.exceptions import DataNotLoadedError
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -91,9 +90,7 @@ class TestPlotTimeSeries:
     """Tests for :meth:`TimeSeriesExplorer.plot_time_series`."""
 
     @patch("predictive_analytics.analysis.explorer.plt")
-    def test_default_columns(
-        self, mock_plt: MagicMock, explorer: TimeSeriesExplorer
-    ) -> None:
+    def test_default_columns(self, mock_plt: MagicMock, explorer: TimeSeriesExplorer) -> None:
         explorer.plot_time_series()
         mock_plt.figure.assert_called_once()
         mock_plt.plot.assert_called_once()
@@ -108,9 +105,7 @@ class TestPlotTimeSeries:
         mock_plt.show.assert_called_once()
 
     @patch("predictive_analytics.analysis.explorer.plt")
-    def test_missing_column_warns(
-        self, mock_plt: MagicMock, explorer: TimeSeriesExplorer
-    ) -> None:
+    def test_missing_column_warns(self, mock_plt: MagicMock, explorer: TimeSeriesExplorer) -> None:
         """A column not present in the data should produce a warning, not a crash."""
         explorer.plot_time_series(columns=["nonexistent"])
         # plt.plot should NOT be called for missing columns
@@ -193,15 +188,13 @@ class TestTestStationarity:
     """Tests for :meth:`TimeSeriesExplorer.test_stationarity`."""
 
     @patch("predictive_analytics.analysis.explorer.adfuller")
-    def test_stationary_result(
-        self, mock_adf: MagicMock, explorer: TimeSeriesExplorer
-    ) -> None:
+    def test_stationary_result(self, mock_adf: MagicMock, explorer: TimeSeriesExplorer) -> None:
         # p-value < 0.05 => stationary
         mock_adf.return_value = (
             -3.5,  # test statistic
             0.01,  # p-value
-            10,    # used_lag
-            90,    # nobs
+            10,  # used_lag
+            90,  # nobs
             {"1%": -3.5, "5%": -2.9, "10%": -2.6},  # critical values
             100.0,  # icbest
         )
@@ -234,9 +227,7 @@ class TestPlotRollingStatistics:
     """Tests for :meth:`TimeSeriesExplorer.plot_rolling_statistics`."""
 
     @patch("predictive_analytics.analysis.explorer.plt")
-    def test_success(
-        self, mock_plt: MagicMock, explorer: TimeSeriesExplorer
-    ) -> None:
+    def test_success(self, mock_plt: MagicMock, explorer: TimeSeriesExplorer) -> None:
         explorer.plot_rolling_statistics(window=10)
         # 3 plt.plot calls: original, rolling mean, rolling std
         assert mock_plt.plot.call_count == 3
@@ -340,9 +331,7 @@ class TestPlotLagScatter:
     """Tests for :meth:`TimeSeriesExplorer.plot_lag_scatter`."""
 
     @patch("predictive_analytics.analysis.explorer.plt")
-    def test_success(
-        self, mock_plt: MagicMock, explorer: TimeSeriesExplorer
-    ) -> None:
+    def test_success(self, mock_plt: MagicMock, explorer: TimeSeriesExplorer) -> None:
         mock_axes = MagicMock()
         flat_axes = [MagicMock() for _ in range(6)]
         mock_axes.flatten.return_value = flat_axes

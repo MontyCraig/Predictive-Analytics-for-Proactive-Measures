@@ -76,14 +76,10 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
             lacks the required ``close`` column.
     """
     if df.empty:
-        raise DataPreprocessingError(
-            "Cannot preprocess an empty DataFrame."
-        )
+        raise DataPreprocessingError("Cannot preprocess an empty DataFrame.")
 
     if "close" not in df.columns:
-        raise DataPreprocessingError(
-            "Input DataFrame must contain a 'close' column."
-        )
+        raise DataPreprocessingError("Input DataFrame must contain a 'close' column.")
 
     # Work on a copy to avoid mutating the caller's data.
     data: pd.DataFrame = df.copy()
@@ -121,16 +117,12 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     # 5. Calculate returns.
     _logger.info("Calculating returns")
     data["daily_return"] = data["close"].pct_change()
-    data["log_return"] = data["daily_return"].apply(
-        lambda x: 0.0 if x <= -1 else np.log(x + 1)
-    )
+    data["log_return"] = data["daily_return"].apply(lambda x: 0.0 if x <= -1 else np.log(x + 1))
 
     # 6. Drop rows with NaN values from lag and rolling features.
     data = data.dropna()
 
-    _logger.info(
-        "Preprocessing complete. Data shape: %s", data.shape
-    )
+    _logger.info("Preprocessing complete. Data shape: %s", data.shape)
     return data
 
 
@@ -169,9 +161,7 @@ def collect_and_preprocess_data(
     df: pd.DataFrame = client.get_time_series(symbol=symbol)
 
     if save:
-        raw_file_path: Path = (
-            Path(config.output_dir) / "raw" / f"{symbol}_raw.csv"
-        )
+        raw_file_path: Path = Path(config.output_dir) / "raw" / f"{symbol}_raw.csv"
         client.save_data(df, raw_file_path)
 
     # Preprocess data.
@@ -179,9 +169,7 @@ def collect_and_preprocess_data(
 
     if save:
         preprocessed_file_path: Path = (
-            Path(config.output_dir)
-            / "preprocessed"
-            / f"{symbol}_preprocessed.csv"
+            Path(config.output_dir) / "preprocessed" / f"{symbol}_preprocessed.csv"
         )
         client.save_data(preprocessed_df, preprocessed_file_path)
 

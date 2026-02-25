@@ -11,6 +11,7 @@ This module provides common utility functions organised into four categories:
   average, exponential smoothing.
 * **Miscellaneous** -- ID generation, retry with back-off, memoisation.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -24,18 +25,7 @@ import time
 from datetime import datetime, timedelta
 from functools import wraps
 from pathlib import Path
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Type, TypeVar, Union
 
 import numpy as np
 import pandas as pd
@@ -104,9 +94,7 @@ def snake_to_title(snake_str: str) -> str:
     return " ".join(word.capitalize() for word in snake_str.split("_"))
 
 
-def truncate_string(
-    text: str, max_length: int = 50, suffix: str = "..."
-) -> str:
+def truncate_string(text: str, max_length: int = 50, suffix: str = "...") -> str:
     """Truncate *text* to at most *max_length* characters.
 
     If truncation occurs the *suffix* is appended (and its length is
@@ -311,9 +299,7 @@ def current_quarter(
     start_date: datetime = datetime(date.year, start_month, 1)
 
     if quarter < 4:
-        end_date: datetime = datetime(
-            date.year, start_month + 3, 1
-        ) - timedelta(days=1)
+        end_date: datetime = datetime(date.year, start_month + 3, 1) - timedelta(days=1)
     else:
         end_date = datetime(date.year + 1, 1, 1) - timedelta(days=1)
 
@@ -339,9 +325,7 @@ def ensure_directory(directory: Union[str, Path]) -> Path:
     return directory
 
 
-def get_latest_file(
-    directory: Union[str, Path], pattern: str = "*"
-) -> Optional[Path]:
+def get_latest_file(directory: Union[str, Path], pattern: str = "*") -> Optional[Path]:
     """Return the most recently modified file matching *pattern*.
 
     Args:
@@ -361,9 +345,7 @@ def get_latest_file(
     return matching_files[0] if matching_files else None
 
 
-def get_file_hash(
-    file_path: Union[str, Path], algorithm: str = "md5"
-) -> str:
+def get_file_hash(file_path: Union[str, Path], algorithm: str = "md5") -> str:
     """Compute the hex-digest hash of a file.
 
     Args:
@@ -505,9 +487,7 @@ def infer_frequency(time_index: pd.DatetimeIndex) -> str:
     return "unknown"
 
 
-def moving_average(
-    series: pd.Series, window: int, center: bool = False
-) -> pd.Series:
+def moving_average(series: pd.Series, window: int, center: bool = False) -> pd.Series:
     """Compute a simple moving average.
 
     Args:
@@ -521,9 +501,7 @@ def moving_average(
     return series.rolling(window=window, center=center).mean()
 
 
-def exponential_smoothing(
-    series: pd.Series, alpha: float = 0.3
-) -> pd.Series:
+def exponential_smoothing(series: pd.Series, alpha: float = 0.3) -> pd.Series:
     """Apply exponential weighted moving-average smoothing.
 
     Args:
@@ -552,7 +530,7 @@ def generate_id(prefix: str = "", length: int = 8) -> str:
         The generated ID string.
     """
     chars: str = string.ascii_uppercase + string.ascii_lowercase + string.digits
-    random_part: str = "".join(random.choice(chars) for _ in range(length))
+    random_part: str = "".join(random.choice(chars) for _ in range(length))  # nosec B311
 
     if prefix:
         return f"{prefix}_{random_part}"
