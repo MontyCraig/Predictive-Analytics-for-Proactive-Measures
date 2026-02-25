@@ -1,4 +1,4 @@
-"""Entry point for running predictive_analytics as a module via ``python -m predictive_analytics``."""
+"""Entry point for ``python -m predictive_analytics``."""
 
 from __future__ import annotations
 

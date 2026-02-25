@@ -14,7 +14,7 @@ Covers every public method of :class:`TimeSeriesExplorer`, the standalone
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
@@ -369,9 +369,7 @@ class TestPlotLagScatter:
 class TestRunFullAnalysis:
     """Tests for :meth:`TimeSeriesExplorer.run_full_analysis`."""
 
-    def test_interactive_mode(
-        self, explorer: TimeSeriesExplorer, mocker: "pytest_mock.MockerFixture"
-    ) -> None:
+    def test_interactive_mode(self, explorer: TimeSeriesExplorer, mocker: MagicMock) -> None:
         """When no output_dir is given, plots are shown interactively."""
         mocker.patch.object(explorer, "plot_time_series")
         mocker.patch.object(explorer, "plot_seasonal_decomposition")
@@ -399,7 +397,7 @@ class TestRunFullAnalysis:
         self,
         explorer: TimeSeriesExplorer,
         tmp_path: Path,
-        mocker: "pytest_mock.MockerFixture",
+        mocker: MagicMock,
     ) -> None:
         """When output_dir is given, plt.savefig and plt.close are called."""
         mocker.patch.object(explorer, "plot_time_series")

@@ -17,17 +17,15 @@ Typical usage::
 
 from __future__ import annotations
 
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
-import numpy as np
 import pandas as pd
 import requests
 from pydantic import BaseModel, ConfigDict, Field
 
-from predictive_analytics.config.logging import logger, setup_logging
+from predictive_analytics.config.logging import setup_logging
 from predictive_analytics.config.settings import AppConfig
 from predictive_analytics.exceptions import APIRateLimitError, DataCollectionError
 
