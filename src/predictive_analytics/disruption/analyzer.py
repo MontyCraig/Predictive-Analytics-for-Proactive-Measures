@@ -7,6 +7,7 @@ data and can produce consolidated reports and visualisations.
 A convenience function :func:`analyze_disruptions` wraps the full
 detect-report-save workflow for common use-cases.
 """
+
 from __future__ import annotations
 
 import json
@@ -22,10 +23,7 @@ from scipy import stats
 
 from predictive_analytics.config.logging import setup_logging
 from predictive_analytics.config.settings import AppConfig
-from predictive_analytics.exceptions import (
-    DataNotLoadedError,
-    DisruptionAnalysisError,
-)
+from predictive_analytics.exceptions import DataNotLoadedError, DisruptionAnalysisError
 from predictive_analytics.types import DisruptionReport
 
 __all__: list[str] = ["DisruptionAnalyzer", "analyze_disruptions"]
@@ -101,12 +99,8 @@ class DisruptionAnalyzer:
         logger.info("Loading forecast data from %s", file_path)
 
         try:
-            self.forecast_data = pd.read_csv(
-                file_path, index_col=0, parse_dates=True
-            )
-            logger.info(
-                "Loaded %d forecast records", len(self.forecast_data)
-            )
+            self.forecast_data = pd.read_csv(file_path, index_col=0, parse_dates=True)
+            logger.info("Loaded %d forecast records", len(self.forecast_data))
         except Exception as exc:
             logger.error("Error loading forecast data: %s", exc)
             raise DisruptionAnalysisError(
@@ -127,19 +121,13 @@ class DisruptionAnalyzer:
 
         if not file_path.exists():
             logger.error("Historical data file not found: %s", file_path)
-            raise FileNotFoundError(
-                f"Historical data file not found: {file_path}"
-            )
+            raise FileNotFoundError(f"Historical data file not found: {file_path}")
 
         logger.info("Loading historical data from %s", file_path)
 
         try:
-            self.historical_data = pd.read_csv(
-                file_path, index_col=0, parse_dates=True
-            )
-            logger.info(
-                "Loaded %d historical records", len(self.historical_data)
-            )
+            self.historical_data = pd.read_csv(file_path, index_col=0, parse_dates=True)
+            logger.info("Loaded %d historical records", len(self.historical_data))
         except Exception as exc:
             logger.error("Error loading historical data: %s", exc)
             raise DisruptionAnalysisError(
@@ -168,13 +156,9 @@ class DisruptionAnalyzer:
         """
         if self.forecast_data is None:
             logger.error("Forecast data not loaded. Please load forecast data first.")
-            raise DataNotLoadedError(
-                "Forecast data not loaded. Please load forecast data first."
-            )
+            raise DataNotLoadedError("Forecast data not loaded. Please load forecast data first.")
 
-        logger.info(
-            "Identifying trend disruptions with threshold %s", threshold
-        )
+        logger.info("Identifying trend disruptions with threshold %s", threshold)
 
         result_df: pd.DataFrame = self.forecast_data.copy()
         x: np.ndarray = np.arange(window_size)
@@ -202,9 +186,7 @@ class DisruptionAnalyzer:
             n_disruptions: int = int(result_df["trend_disruption"].sum())
             logger.info("Detected %d trend disruptions", n_disruptions)
         else:
-            logger.warning(
-                "Slope standard deviation is zero. No trend disruptions detected."
-            )
+            logger.warning("Slope standard deviation is zero. No trend disruptions detected.")
             result_df["slope_z_score"] = 0.0
             result_df["trend_disruption"] = False
 
@@ -229,18 +211,12 @@ class DisruptionAnalyzer:
         """
         if self.forecast_data is None:
             logger.error("Forecast data not loaded. Please load forecast data first.")
-            raise DataNotLoadedError(
-                "Forecast data not loaded. Please load forecast data first."
-            )
+            raise DataNotLoadedError("Forecast data not loaded. Please load forecast data first.")
 
-        logger.info(
-            "Identifying volatility disruptions with threshold %s", threshold
-        )
+        logger.info("Identifying volatility disruptions with threshold %s", threshold)
 
         result_df: pd.DataFrame = self.forecast_data.copy()
-        result_df["rolling_volatility"] = (
-            result_df["forecast"].rolling(window=window_size).std()
-        )
+        result_df["rolling_volatility"] = result_df["forecast"].rolling(window=window_size).std()
 
         valid_volatility: pd.Series = result_df["rolling_volatility"].dropna()
         vol_mean: float = float(valid_volatility.mean())
@@ -250,25 +226,20 @@ class DisruptionAnalyzer:
             result_df["volatility_z_score"] = np.abs(
                 (result_df["rolling_volatility"] - vol_mean) / vol_std
             )
-            result_df["volatility_disruption"] = (
-                result_df["volatility_z_score"] > threshold
-            )
+            result_df["volatility_disruption"] = result_df["volatility_z_score"] > threshold
 
             n_disruptions: int = int(result_df["volatility_disruption"].sum())
             logger.info("Detected %d volatility disruptions", n_disruptions)
         else:
             logger.warning(
-                "Volatility standard deviation is zero. "
-                "No volatility disruptions detected."
+                "Volatility standard deviation is zero. " "No volatility disruptions detected."
             )
             result_df["volatility_z_score"] = 0.0
             result_df["volatility_disruption"] = False
 
         return result_df
 
-    def identify_level_disruptions(
-        self, threshold_std: float = 2.0
-    ) -> pd.DataFrame:
+    def identify_level_disruptions(self, threshold_std: float = 2.0) -> pd.DataFrame:
         """Identify sudden level shifts between consecutive forecast values.
 
         Args:
@@ -284,9 +255,7 @@ class DisruptionAnalyzer:
         """
         if self.forecast_data is None:
             logger.error("Forecast data not loaded. Please load forecast data first.")
-            raise DataNotLoadedError(
-                "Forecast data not loaded. Please load forecast data first."
-            )
+            raise DataNotLoadedError("Forecast data not loaded. Please load forecast data first.")
 
         logger.info(
             "Identifying level disruptions with threshold %s std",
@@ -310,9 +279,7 @@ class DisruptionAnalyzer:
 
         return result_df
 
-    def identify_uncertainty_disruptions(
-        self, threshold: float = 2.0
-    ) -> pd.DataFrame:
+    def identify_uncertainty_disruptions(self, threshold: float = 2.0) -> pd.DataFrame:
         """Identify periods with abnormally wide prediction intervals.
 
         Args:
@@ -330,28 +297,20 @@ class DisruptionAnalyzer:
         """
         if self.forecast_data is None:
             logger.error("Forecast data not loaded. Please load forecast data first.")
-            raise DataNotLoadedError(
-                "Forecast data not loaded. Please load forecast data first."
-            )
+            raise DataNotLoadedError("Forecast data not loaded. Please load forecast data first.")
 
         required_cols: set[str] = {"lower_bound", "upper_bound"}
         if not required_cols.issubset(self.forecast_data.columns):
-            logger.error(
-                "Forecast data does not contain prediction intervals."
-            )
+            logger.error("Forecast data does not contain prediction intervals.")
             raise DisruptionAnalysisError(
                 "Forecast data does not contain prediction intervals "
                 "(requires 'lower_bound' and 'upper_bound' columns)."
             )
 
-        logger.info(
-            "Identifying uncertainty disruptions with threshold %s", threshold
-        )
+        logger.info("Identifying uncertainty disruptions with threshold %s", threshold)
 
         result_df: pd.DataFrame = self.forecast_data.copy()
-        result_df["interval_width"] = (
-            result_df["upper_bound"] - result_df["lower_bound"]
-        )
+        result_df["interval_width"] = result_df["upper_bound"] - result_df["lower_bound"]
 
         width_mean: float = float(result_df["interval_width"].mean())
         width_std: float = float(result_df["interval_width"].std())
@@ -360,13 +319,9 @@ class DisruptionAnalyzer:
             result_df["uncertainty_z_score"] = np.abs(
                 (result_df["interval_width"] - width_mean) / width_std
             )
-            result_df["uncertainty_disruption"] = (
-                result_df["uncertainty_z_score"] > threshold
-            )
+            result_df["uncertainty_disruption"] = result_df["uncertainty_z_score"] > threshold
 
-            n_disruptions: int = int(
-                result_df["uncertainty_disruption"].sum()
-            )
+            n_disruptions: int = int(result_df["uncertainty_disruption"].sum())
             logger.info("Detected %d uncertainty disruptions", n_disruptions)
         else:
             logger.warning(
@@ -444,8 +399,7 @@ class DisruptionAnalyzer:
         """
         if "significant_disruption" not in disruption_df.columns:
             logger.warning(
-                "Disruption DataFrame does not contain "
-                "significant_disruption column."
+                "Disruption DataFrame does not contain " "significant_disruption column."
             )
             return
 
@@ -453,9 +407,7 @@ class DisruptionAnalyzer:
 
         # ---- Upper subplot: forecast + disruptions -----------------------
         if self.historical_data is not None:
-            historical_data: pd.DataFrame = self.historical_data.tail(
-                historical_periods
-            )
+            historical_data: pd.DataFrame = self.historical_data.tail(historical_periods)
             plt.subplot(2, 1, 1)
             plt.plot(
                 historical_data.index,
@@ -473,9 +425,7 @@ class DisruptionAnalyzer:
             linestyle="-",
         )
 
-        significant_points: pd.DataFrame = disruption_df[
-            disruption_df["significant_disruption"]
-        ]
+        significant_points: pd.DataFrame = disruption_df[disruption_df["significant_disruption"]]
         if not significant_points.empty:
             plt.scatter(
                 significant_points.index,
@@ -547,9 +497,7 @@ class DisruptionAnalyzer:
     # Reporting
     # ------------------------------------------------------------------
 
-    def generate_disruption_report(
-        self, disruption_df: pd.DataFrame
-    ) -> DisruptionReport:
+    def generate_disruption_report(self, disruption_df: pd.DataFrame) -> DisruptionReport:
         """Produce a summary report dictionary for the given disruptions.
 
         Args:
@@ -583,9 +531,7 @@ class DisruptionAnalyzer:
 
         total_periods: int = len(disruption_df)
         disruption_percentage: float = (
-            (significant_disruptions / total_periods) * 100
-            if total_periods > 0
-            else 0.0
+            (significant_disruptions / total_periods) * 100 if total_periods > 0 else 0.0
         )
 
         report: DisruptionReport = {
@@ -667,13 +613,9 @@ def analyze_disruptions(
     elif historical_data_path is None and analyzer.historical_data is None:
         preprocessed_dir: Path = Path(config.output_dir) / "preprocessed"
         if preprocessed_dir.exists():
-            data_files: List[Path] = list(
-                preprocessed_dir.glob("*_preprocessed.csv")
-            )
+            data_files: List[Path] = list(preprocessed_dir.glob("*_preprocessed.csv"))
             if data_files:
-                data_path: Path = max(
-                    data_files, key=lambda p: p.stat().st_mtime
-                )
+                data_path: Path = max(data_files, key=lambda p: p.stat().st_mtime)
                 analyzer.load_historical_data(data_path)
 
     # Detect disruptions
@@ -683,22 +625,16 @@ def analyze_disruptions(
     report: DisruptionReport = analyzer.generate_disruption_report(disruption_df)
 
     logger.info("Disruption analysis summary:")
-    logger.info(
-        "  Total forecast periods: %d", report["total_forecast_periods"]
-    )
+    logger.info("  Total forecast periods: %d", report["total_forecast_periods"])
     logger.info(
         "  Significant disruptions: %d (%.2f%%)",
         report["significant_disruptions"],
         report["disruption_percentage"],
     )
     logger.info("  Trend disruptions: %d", report["trend_disruptions"])
-    logger.info(
-        "  Volatility disruptions: %d", report["volatility_disruptions"]
-    )
+    logger.info("  Volatility disruptions: %d", report["volatility_disruptions"])
     logger.info("  Level disruptions: %d", report["level_disruptions"])
-    logger.info(
-        "  Uncertainty disruptions: %d", report["uncertainty_disruptions"]
-    )
+    logger.info("  Uncertainty disruptions: %d", report["uncertainty_disruptions"])
 
     if report["significant_disruption_dates"]:
         logger.info("Significant disruption dates:")
@@ -720,17 +656,13 @@ def analyze_disruptions(
         timestamp: str = dt_datetime.now().strftime("%Y%m%d_%H%M%S")
 
         # Save disruption data CSV
-        disruption_path: Path = (
-            disruptions_dir / f"disruptions_{timestamp}.csv"
-        )
+        disruption_path: Path = disruptions_dir / f"disruptions_{timestamp}.csv"
         disruption_df.to_csv(disruption_path)
         logger.info("Disruption data saved to %s", disruption_path)
 
         # Save plot
         if plot:
-            plot_path: Path = (
-                disruptions_dir / f"disruptions_plot_{timestamp}.png"
-            )
+            plot_path: Path = disruptions_dir / f"disruptions_plot_{timestamp}.png"
             analyzer.plot_disruptions(disruption_df, save_path=plot_path)
 
         # Save JSON report (convert datetime objects for serialisation)
@@ -740,9 +672,7 @@ def analyze_disruptions(
             for d in report["significant_disruption_dates"]
         ]
 
-        report_path: Path = (
-            disruptions_dir / f"disruption_report_{timestamp}.json"
-        )
+        report_path: Path = disruptions_dir / f"disruption_report_{timestamp}.json"
         with open(report_path, "w") as fh:
             json.dump(report_copy, fh, indent=2)
         logger.info("Disruption report saved to %s", report_path)

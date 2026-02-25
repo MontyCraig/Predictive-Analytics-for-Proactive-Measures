@@ -23,7 +23,6 @@ from predictive_analytics.exceptions import (
     PredictiveAnalyticsError,
 )
 
-
 # ---------------------------------------------------------------------------
 # Inheritance checks
 # ---------------------------------------------------------------------------

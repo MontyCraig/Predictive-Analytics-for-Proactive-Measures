@@ -27,19 +27,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from predictive_analytics.config.settings import (
-    APIConfig,
-    AppConfig,
-    ModelConfig,
-    SARIMAConfig,
-)
+from predictive_analytics.config.settings import APIConfig, AppConfig, ModelConfig, SARIMAConfig
 from predictive_analytics.exceptions import (
     DataNotLoadedError,
     ModelNotTrainedError,
     ModelTrainingError,
 )
 from predictive_analytics.modeling.trainer import ModelTrainer, train_and_evaluate_model
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -96,9 +90,7 @@ def split_trainer(trainer: ModelTrainer) -> ModelTrainer:
 
 
 class TestModelTrainerInit:
-    def test_init_stores_attributes(
-        self, app_config: AppConfig, sample_df: pd.DataFrame
-    ) -> None:
+    def test_init_stores_attributes(self, app_config: AppConfig, sample_df: pd.DataFrame) -> None:
         t = ModelTrainer(app_config, sample_df, target_column="open")
         assert t.data is sample_df
         assert t.target_column == "open"
@@ -130,9 +122,7 @@ class TestLoadData:
         with pytest.raises(FileNotFoundError, match="File not found"):
             t.load_data("/nonexistent/file.csv")
 
-    def test_load_data_parse_error(
-        self, app_config: AppConfig, tmp_path: Path
-    ) -> None:
+    def test_load_data_parse_error(self, app_config: AppConfig, tmp_path: Path) -> None:
         bad_file = tmp_path / "bad.csv"
         bad_file.write_text("data")
         with patch("predictive_analytics.modeling.trainer.pd.read_csv") as mock_csv:
@@ -171,9 +161,7 @@ class TestSplitData:
 
 class TestTrainSarimaModel:
     @patch("predictive_analytics.modeling.trainer.SARIMAX")
-    def test_success(
-        self, mock_sarimax_cls: MagicMock, split_trainer: ModelTrainer
-    ) -> None:
+    def test_success(self, mock_sarimax_cls: MagicMock, split_trainer: ModelTrainer) -> None:
         mock_model = MagicMock()
         mock_fit = MagicMock()
         mock_sarimax_cls.return_value = mock_model
@@ -215,25 +203,19 @@ class TestTrainSarimaModel:
             split_trainer.train_sarima_model()
 
     @patch("predictive_analytics.modeling.trainer.SARIMAX")
-    def test_custom_order(
-        self, mock_sarimax_cls: MagicMock, split_trainer: ModelTrainer
-    ) -> None:
+    def test_custom_order(self, mock_sarimax_cls: MagicMock, split_trainer: ModelTrainer) -> None:
         mock_model = MagicMock()
         mock_sarimax_cls.return_value = mock_model
         mock_model.fit.return_value = MagicMock()
 
-        split_trainer.train_sarima_model(
-            order=(2, 1, 0), seasonal_order=(0, 1, 1, 7)
-        )
+        split_trainer.train_sarima_model(order=(2, 1, 0), seasonal_order=(0, 1, 1, 7))
         assert split_trainer.model_meta["order"] == (2, 1, 0)
         assert split_trainer.model_meta["seasonal_order"] == (0, 1, 1, 7)
 
 
 class TestTrainProphetModel:
     @patch("predictive_analytics.modeling.trainer.Prophet")
-    def test_success(
-        self, mock_prophet_cls: MagicMock, split_trainer: ModelTrainer
-    ) -> None:
+    def test_success(self, mock_prophet_cls: MagicMock, split_trainer: ModelTrainer) -> None:
         mock_instance = MagicMock()
         mock_prophet_cls.return_value = mock_instance
         mock_instance.fit.return_value = mock_instance
@@ -281,9 +263,7 @@ class TestTrainProphetModel:
 
 class TestTrainAutoArimaModel:
     @patch("predictive_analytics.modeling.trainer.pm")
-    def test_success(
-        self, mock_pm: MagicMock, split_trainer: ModelTrainer
-    ) -> None:
+    def test_success(self, mock_pm: MagicMock, split_trainer: ModelTrainer) -> None:
         mock_model = MagicMock()
         mock_model.order = (1, 0, 1)
         mock_model.seasonal_order = (0, 1, 1, 7)
@@ -300,9 +280,7 @@ class TestTrainAutoArimaModel:
             trainer.train_auto_arima_model()
 
     @patch("predictive_analytics.modeling.trainer.pm")
-    def test_with_exog_columns(
-        self, mock_pm: MagicMock, split_trainer: ModelTrainer
-    ) -> None:
+    def test_with_exog_columns(self, mock_pm: MagicMock, split_trainer: ModelTrainer) -> None:
         mock_model = MagicMock()
         mock_model.order = (1, 0, 0)
         mock_model.seasonal_order = (0, 0, 0, 7)
@@ -317,9 +295,7 @@ class TestTrainAutoArimaModel:
             split_trainer.train_auto_arima_model(exog_columns=["nonexistent_col"])
 
     @patch("predictive_analytics.modeling.trainer.pm")
-    def test_fit_failure_raises(
-        self, mock_pm: MagicMock, split_trainer: ModelTrainer
-    ) -> None:
+    def test_fit_failure_raises(self, mock_pm: MagicMock, split_trainer: ModelTrainer) -> None:
         mock_pm.auto_arima.side_effect = RuntimeError("auto arima fail")
         with pytest.raises(ModelTrainingError, match="Auto ARIMA model training failed"):
             split_trainer.train_auto_arima_model()
@@ -351,9 +327,7 @@ class TestTrainExponentialSmoothingModel:
         mock_es_cls.return_value = mock_model
         mock_model.fit.return_value = MagicMock()
 
-        split_trainer.train_exponential_smoothing_model(
-            seasonal="add", seasonal_periods=None
-        )
+        split_trainer.train_exponential_smoothing_model(seasonal="add", seasonal_periods=None)
         # Should default seasonal_periods to 7
         assert split_trainer.model_meta["seasonal_periods"] == 7
 
@@ -365,15 +339,11 @@ class TestTrainExponentialSmoothingModel:
         mock_es_cls.return_value = mock_model
         mock_model.fit.return_value = MagicMock()
 
-        split_trainer.train_exponential_smoothing_model(
-            seasonal="add", seasonal_periods=12
-        )
+        split_trainer.train_exponential_smoothing_model(seasonal="add", seasonal_periods=12)
         assert split_trainer.model_meta["seasonal_periods"] == 12
 
     @patch("predictive_analytics.modeling.trainer.ExponentialSmoothing")
-    def test_fit_failure_raises(
-        self, mock_es_cls: MagicMock, split_trainer: ModelTrainer
-    ) -> None:
+    def test_fit_failure_raises(self, mock_es_cls: MagicMock, split_trainer: ModelTrainer) -> None:
         mock_es_cls.side_effect = RuntimeError("es fail")
         with pytest.raises(
             ModelTrainingError, match="Exponential Smoothing model training failed"
@@ -402,12 +372,8 @@ class TestTrainModel:
         split_trainer.train_model("auto_arima")
         mock_method.assert_called_once_with()
 
-    def test_dispatches_to_exp_smoothing(
-        self, split_trainer: ModelTrainer, mocker: Any
-    ) -> None:
-        mock_method = mocker.patch.object(
-            split_trainer, "train_exponential_smoothing_model"
-        )
+    def test_dispatches_to_exp_smoothing(self, split_trainer: ModelTrainer, mocker: Any) -> None:
+        mock_method = mocker.patch.object(split_trainer, "train_exponential_smoothing_model")
         split_trainer.train_model("exp_smoothing")
         mock_method.assert_called_once_with()
 
@@ -552,9 +518,7 @@ class TestEvaluateModel:
     def test_exp_smoothing_evaluation(self, split_trainer: ModelTrainer) -> None:
         mock_fit = MagicMock()
         n_test = len(split_trainer.test_data)
-        predictions = pd.Series(
-            np.ones(n_test), index=split_trainer.test_data.index
-        )
+        predictions = pd.Series(np.ones(n_test), index=split_trainer.test_data.index)
         mock_fit.forecast.return_value = predictions
 
         split_trainer.model_fit = mock_fit
@@ -581,9 +545,7 @@ class TestSaveLoadModel:
         with pytest.raises(ModelNotTrainedError, match="Model not trained"):
             trainer.save_model("/tmp/model.pkl")
 
-    def test_save_and_load_roundtrip(
-        self, split_trainer: ModelTrainer, tmp_path: Path
-    ) -> None:
+    def test_save_and_load_roundtrip(self, split_trainer: ModelTrainer, tmp_path: Path) -> None:
         # Simulate a trained model
         split_trainer.model_fit = {"fake": "model"}
         split_trainer.model_meta = {"type": "sarima", "order": (1, 1, 1)}
@@ -598,9 +560,7 @@ class TestSaveLoadModel:
         assert new_trainer.model_fit == {"fake": "model"}
         assert new_trainer.model_meta["type"] == "sarima"
 
-    def test_load_legacy_format(
-        self, trainer: ModelTrainer, tmp_path: Path
-    ) -> None:
+    def test_load_legacy_format(self, trainer: ModelTrainer, tmp_path: Path) -> None:
         """Loading a bare (non-dict) pickle should work as legacy format."""
         model_path = tmp_path / "legacy.pkl"
         with open(model_path, "wb") as fh:
@@ -614,9 +574,7 @@ class TestSaveLoadModel:
         with pytest.raises(FileNotFoundError, match="Model file not found"):
             trainer.load_model("/nonexistent/model.pkl")
 
-    def test_load_corrupt_file_raises(
-        self, trainer: ModelTrainer, tmp_path: Path
-    ) -> None:
+    def test_load_corrupt_file_raises(self, trainer: ModelTrainer, tmp_path: Path) -> None:
         bad_file = tmp_path / "corrupt.pkl"
         bad_file.write_bytes(b"not a pickle")
         with pytest.raises(ModelTrainingError, match="Failed to load model"):
@@ -643,9 +601,7 @@ class TestPlotResults:
         with pytest.raises(ModelNotTrainedError, match="Model not evaluated"):
             trainer.plot_results()
 
-    def test_raises_when_model_fit_but_no_predictions(
-        self, split_trainer: ModelTrainer
-    ) -> None:
+    def test_raises_when_model_fit_but_no_predictions(self, split_trainer: ModelTrainer) -> None:
         split_trainer.model_fit = MagicMock()
         # predictions is still None
         with pytest.raises(ModelNotTrainedError, match="Model not evaluated"):

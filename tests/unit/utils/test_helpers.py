@@ -44,7 +44,6 @@ from predictive_analytics.utils.helpers import (
     truncate_string,
 )
 
-
 # ======================================================================
 # String Formatting Functions
 # ======================================================================
@@ -500,6 +499,7 @@ class TestInferFrequency:
 
         class _FakeTimedelta:
             """Looks like a Timedelta but with un-normalised 24 hours."""
+
             days = 0
             seconds = 86400
 
@@ -509,6 +509,7 @@ class TestInferFrequency:
 
         class _PatchedDiffSeries(pd.Series):
             """pd.Series subclass that overrides mode()."""
+
             def mode(self, dropna: bool = True) -> pd.Series:  # type: ignore[override]
                 return pd.Series([_FakeTimedelta()])
 

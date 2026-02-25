@@ -18,14 +18,14 @@ import pytest
 from typer.testing import CliRunner
 
 from predictive_analytics.cli import (
-    app,
     _ensure_directory,
     _resolve_output_dir,
     _run_collection,
-    _run_eda,
-    _run_training,
-    _run_forecasting,
     _run_disruptions,
+    _run_eda,
+    _run_forecasting,
+    _run_training,
+    app,
 )
 
 runner = CliRunner()
@@ -119,6 +119,7 @@ class TestRunCommand:
         result = runner.invoke(
             app,
             [
+                "--symbol",
                 "AAPL",
                 "--output-dir",
                 str(tmp_path / "out"),
@@ -153,6 +154,7 @@ class TestRunCommand:
         result = runner.invoke(
             app,
             [
+                "--symbol",
                 "MSFT",
                 "--output-dir",
                 str(tmp_path / "out"),
@@ -190,6 +192,7 @@ class TestRunCommand:
         result = runner.invoke(
             app,
             [
+                "--symbol",
                 "TSLA",
                 "--output-dir",
                 str(tmp_path / "out"),
@@ -224,6 +227,7 @@ class TestRunCommand:
         result = runner.invoke(
             app,
             [
+                "--symbol",
                 "GOOG",
                 "--output-dir",
                 str(tmp_path / "out"),
@@ -286,7 +290,7 @@ class TestRunCommandErrors:
         mock_get_config: MagicMock,
     ) -> None:
         mock_get_config.side_effect = RuntimeError("config boom")
-        result = runner.invoke(app, ["AAPL"])
+        result = runner.invoke(app, ["--symbol", "AAPL"])
         assert result.exit_code == 1
         clean = _strip_ansi(result.output).lower()
         assert "config boom" in clean or "error" in clean
@@ -297,7 +301,7 @@ class TestRunCommandErrors:
         mock_get_config: MagicMock,
     ) -> None:
         mock_get_config.side_effect = KeyboardInterrupt()
-        result = runner.invoke(app, ["AAPL"])
+        result = runner.invoke(app, ["--symbol", "AAPL"])
         assert result.exit_code == 130
 
     @patch("predictive_analytics.cli._run_collection")
@@ -309,7 +313,7 @@ class TestRunCommandErrors:
     ) -> None:
         mock_get_config.return_value = MagicMock()
         mock_collection.side_effect = Exception("collection failed")
-        result = runner.invoke(app, ["AAPL"])
+        result = runner.invoke(app, ["--symbol", "AAPL"])
         assert result.exit_code == 1
 
     @patch(_PATCH_GET_CONFIG)
@@ -320,7 +324,7 @@ class TestRunCommandErrors:
         from predictive_analytics.exceptions import ConfigurationError
 
         mock_get_config.side_effect = ConfigurationError("API key not found")
-        result = runner.invoke(app, ["AAPL"])
+        result = runner.invoke(app, ["--symbol", "AAPL"])
         assert result.exit_code == 1
         clean = _strip_ansi(result.output).lower()
         assert "api key" in clean or "error" in clean
@@ -354,6 +358,7 @@ class TestRunCommandOptions:
         result = runner.invoke(
             app,
             [
+                "--symbol",
                 "AAPL",
                 "--env-file",
                 str(env_file),
@@ -390,6 +395,7 @@ class TestRunCommandOptions:
         result = runner.invoke(
             app,
             [
+                "--symbol",
                 "MSFT",
                 "--output-dir",
                 str(tmp_path / "out"),
@@ -424,6 +430,7 @@ class TestRunCommandOptions:
         result = runner.invoke(
             app,
             [
+                "--symbol",
                 "AAPL",
                 "--api-key",
                 "my-test-key",

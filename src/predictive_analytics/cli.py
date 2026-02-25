@@ -213,8 +213,10 @@ def _run_disruptions(
 
 @app.command()
 def run(
-    symbol: str = typer.Argument(
+    symbol: str = typer.Option(
         "MSFT",
+        "--symbol",
+        "-s",
         help="Stock ticker symbol to analyse.",
     ),
     api_key: Optional[str] = typer.Option(

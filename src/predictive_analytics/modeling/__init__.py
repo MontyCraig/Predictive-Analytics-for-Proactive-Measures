@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from predictive_analytics.modeling.forecaster import (
-    TimeSeriesForecaster,
-    generate_forecast,
-)
+from predictive_analytics.modeling.forecaster import TimeSeriesForecaster, generate_forecast
 from predictive_analytics.modeling.trainer import ModelTrainer, train_and_evaluate_model
 
 __all__ = [

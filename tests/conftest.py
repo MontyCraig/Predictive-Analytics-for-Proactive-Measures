@@ -10,11 +10,7 @@ from pydantic import SecretStr
 
 matplotlib.use("Agg")
 
-from predictive_analytics.config.settings import (
-    APIConfig,
-    AppConfig,
-    ModelConfig,
-)
+from predictive_analytics.config.settings import APIConfig, AppConfig, ModelConfig
 
 
 @pytest.fixture()

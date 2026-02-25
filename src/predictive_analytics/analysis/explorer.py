@@ -84,8 +84,7 @@ class TimeSeriesExplorer:
     ) -> None:
         if data is None or data.empty:
             raise DataNotLoadedError(
-                "Cannot initialise TimeSeriesExplorer with empty or "
-                "None data."
+                "Cannot initialise TimeSeriesExplorer with empty or " "None data."
             )
 
         self.data: pd.DataFrame = data
@@ -93,9 +92,7 @@ class TimeSeriesExplorer:
 
         # Validate / coerce index.
         if not isinstance(data.index, pd.DatetimeIndex):
-            _logger.warning(
-                "Data index is not a DatetimeIndex. Converting..."
-            )
+            _logger.warning("Data index is not a DatetimeIndex. Converting...")
             self.data.index = pd.to_datetime(self.data.index)
 
         _logger.info(
@@ -124,9 +121,7 @@ class TimeSeriesExplorer:
 
         for column in columns:
             if column in self.data.columns:
-                plt.plot(
-                    self.data.index, self.data[column], label=column
-                )
+                plt.plot(self.data.index, self.data[column], label=column)
             else:
                 _logger.warning("Column %s not found in data", column)
 
@@ -179,9 +174,7 @@ class TimeSeriesExplorer:
             plt.show()
 
         except Exception as exc:
-            _logger.error(
-                "Error in seasonal decomposition: %s", exc
-            )
+            _logger.error("Error in seasonal decomposition: %s", exc)
             raise
 
     def plot_acf_pacf(self, lags: int = 40) -> None:
@@ -194,20 +187,11 @@ class TimeSeriesExplorer:
 
         fig, axes = plt.subplots(2, 1, figsize=(12, 8))
 
-        plot_acf(
-            self.data[self.target_column], lags=lags, ax=axes[0]
-        )
-        axes[0].set_title(
-            f"Autocorrelation Function (ACF) for {self.target_column}"
-        )
+        plot_acf(self.data[self.target_column], lags=lags, ax=axes[0])
+        axes[0].set_title(f"Autocorrelation Function (ACF) for {self.target_column}")
 
-        plot_pacf(
-            self.data[self.target_column], lags=lags, ax=axes[1]
-        )
-        axes[1].set_title(
-            f"Partial Autocorrelation Function (PACF) for "
-            f"{self.target_column}"
-        )
+        plot_pacf(self.data[self.target_column], lags=lags, ax=axes[1])
+        axes[1].set_title(f"Partial Autocorrelation Function (PACF) for " f"{self.target_column}")
 
         plt.tight_layout()
         plt.show()
@@ -228,9 +212,7 @@ class TimeSeriesExplorer:
             * **critical_values** (``dict[str, float]``): Mapping of
               significance level labels to critical values.
         """
-        _logger.info(
-            "Testing stationarity of %s", self.target_column
-        )
+        _logger.info("Testing stationarity of %s", self.target_column)
 
         result = adfuller(self.data[self.target_column].dropna())
         test_statistic: float = result[0]
@@ -249,14 +231,9 @@ class TimeSeriesExplorer:
 
         is_stationary: bool = p_value < 0.05
         if is_stationary:
-            _logger.info(
-                "Result: The time series is stationary (reject H0)"
-            )
+            _logger.info("Result: The time series is stationary (reject H0)")
         else:
-            _logger.info(
-                "Result: The time series is non-stationary "
-                "(fail to reject H0)"
-            )
+            _logger.info("Result: The time series is non-stationary " "(fail to reject H0)")
 
         return is_stationary, p_value, critical_values
 
@@ -267,16 +244,10 @@ class TimeSeriesExplorer:
             window: Window size (number of observations) for the
                 rolling calculations.
         """
-        _logger.info(
-            "Plotting rolling statistics with window %d", window
-        )
+        _logger.info("Plotting rolling statistics with window %d", window)
 
-        rolling_mean: pd.Series = (
-            self.data[self.target_column].rolling(window=window).mean()
-        )
-        rolling_std: pd.Series = (
-            self.data[self.target_column].rolling(window=window).std()
-        )
+        rolling_mean: pd.Series = self.data[self.target_column].rolling(window=window).mean()
+        rolling_std: pd.Series = self.data[self.target_column].rolling(window=window).std()
 
         plt.figure(figsize=(12, 6))
         plt.plot(
@@ -312,9 +283,7 @@ class TimeSeriesExplorer:
 
         # Q-Q Plot.
         plt.subplot(1, 2, 2)
-        scipy_stats.probplot(
-            self.data[self.target_column], dist="norm", plot=plt
-        )
+        scipy_stats.probplot(self.data[self.target_column], dist="norm", plot=plt)
         plt.title("Q-Q Plot")
 
         plt.tight_layout()
@@ -337,12 +306,8 @@ class TimeSeriesExplorer:
         }
 
         if by not in self.data.columns and by in _calendar_derivations:
-            _logger.warning(
-                "Column %s not found in data. Adding it...", by
-            )
-            self.data[by] = getattr(
-                self.data.index, _calendar_derivations[by]
-            )
+            _logger.warning("Column %s not found in data. Adding it...", by)
+            self.data[by] = getattr(self.data.index, _calendar_derivations[by])
 
         plt.figure(figsize=(12, 6))
         sns.boxplot(x=by, y=self.target_column, data=self.data)
@@ -361,10 +326,7 @@ class TimeSeriesExplorer:
                 columns in the DataFrame.
         """
         if columns is None:
-            numeric_cols: list[str] = (
-                self.data.select_dtypes(include=[np.number])
-                .columns.tolist()
-            )
+            numeric_cols: list[str] = self.data.select_dtypes(include=[np.number]).columns.tolist()
             columns = numeric_cols
 
         corr_matrix: pd.DataFrame = self.data[columns].corr()
@@ -391,9 +353,7 @@ class TimeSeriesExplorer:
         for lag in range(1, max_lag + 1):
             lag_col: str = f"lag_{lag}"
             if lag_col not in self.data.columns:
-                self.data[lag_col] = self.data[self.target_column].shift(
-                    lag
-                )
+                self.data[lag_col] = self.data[self.target_column].shift(lag)
 
         # Create scatter plots.
         n_rows: int = (max_lag // 2) + (max_lag % 2)
@@ -525,17 +485,9 @@ def load_data(file_path: Union[str, Path]) -> pd.DataFrame:
     _logger.info("Loading data from %s", resolved)
 
     try:
-        df: pd.DataFrame = pd.read_csv(
-            resolved, index_col=0, parse_dates=True
-        )
-        _logger.info(
-            "Loaded %d records from %s", len(df), resolved
-        )
+        df: pd.DataFrame = pd.read_csv(resolved, index_col=0, parse_dates=True)
+        _logger.info("Loaded %d records from %s", len(df), resolved)
         return df
     except Exception as exc:
-        _logger.error(
-            "Error loading data from %s: %s", resolved, exc
-        )
-        raise DataNotLoadedError(
-            f"Failed to load data from {resolved}: {exc}"
-        ) from exc
+        _logger.error("Error loading data from %s: %s", resolved, exc)
+        raise DataNotLoadedError(f"Failed to load data from {resolved}: {exc}") from exc

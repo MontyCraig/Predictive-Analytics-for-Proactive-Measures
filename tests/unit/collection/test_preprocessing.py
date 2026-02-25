@@ -23,7 +23,6 @@ from predictive_analytics.collection.preprocessing import (
 )
 from predictive_analytics.exceptions import DataPreprocessingError
 
-
 # ---------------------------------------------------------------------------
 # preprocess_data - success
 # ---------------------------------------------------------------------------

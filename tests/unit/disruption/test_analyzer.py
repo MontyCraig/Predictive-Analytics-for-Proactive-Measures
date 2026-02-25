@@ -16,15 +16,8 @@ import pandas as pd
 import pytest
 
 from predictive_analytics.config.settings import APIConfig, AppConfig, ModelConfig
-from predictive_analytics.disruption.analyzer import (
-    DisruptionAnalyzer,
-    analyze_disruptions,
-)
-from predictive_analytics.exceptions import (
-    DataNotLoadedError,
-    DisruptionAnalysisError,
-)
-
+from predictive_analytics.disruption.analyzer import DisruptionAnalyzer, analyze_disruptions
+from predictive_analytics.exceptions import DataNotLoadedError, DisruptionAnalysisError
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -147,9 +140,7 @@ class TestLoadForecast:
         assert analyzer_no_data.forecast_data is not None
         assert len(analyzer_no_data.forecast_data) == 5
 
-    def test_load_forecast_file_not_found(
-        self, analyzer_no_data: DisruptionAnalyzer
-    ) -> None:
+    def test_load_forecast_file_not_found(self, analyzer_no_data: DisruptionAnalyzer) -> None:
         with pytest.raises(FileNotFoundError, match="Forecast file not found"):
             analyzer_no_data.load_forecast("/nonexistent/forecast.csv")
 
@@ -159,7 +150,10 @@ class TestLoadForecast:
         bad_file = tmp_path / "bad.csv"
         bad_file.write_text("not,valid\x00csv\x00data\n\x00\x00\x00")
         # Force a parse error by mocking pd.read_csv to raise
-        with patch("predictive_analytics.disruption.analyzer.pd.read_csv", side_effect=Exception("parse fail")):
+        with patch(
+            "predictive_analytics.disruption.analyzer.pd.read_csv",
+            side_effect=Exception("parse fail"),
+        ):
             with pytest.raises(DisruptionAnalysisError, match="Failed to load forecast data"):
                 analyzer_no_data.load_forecast(bad_file)
 
@@ -204,7 +198,9 @@ class TestLoadHistoricalData:
     ) -> None:
         bad_file = tmp_path / "bad_hist.csv"
         bad_file.write_text("junk")
-        with patch("predictive_analytics.disruption.analyzer.pd.read_csv", side_effect=Exception("bad")):
+        with patch(
+            "predictive_analytics.disruption.analyzer.pd.read_csv", side_effect=Exception("bad")
+        ):
             with pytest.raises(DisruptionAnalysisError, match="Failed to load historical data"):
                 analyzer_no_data.load_historical_data(bad_file)
 
@@ -288,9 +284,7 @@ class TestLevelDisruptions:
         # The spike at index 15 should create at least one level disruption
         assert result["level_disruption"].any()
 
-    def test_no_disruptions_in_smooth_data(
-        self, app_config: AppConfig
-    ) -> None:
+    def test_no_disruptions_in_smooth_data(self, app_config: AppConfig) -> None:
         dates = pd.date_range("2024-01-01", periods=20, freq="D")
         # Perfectly linear forecast -- diffs are constant, no outlier
         df = pd.DataFrame(
@@ -373,9 +367,7 @@ class TestIdentifyAllDisruptions:
             + result["level_disruption"].astype(int)
             + result["uncertainty_disruption"].astype(int)
         )
-        pd.testing.assert_series_equal(
-            result["total_disruptions"], expected, check_names=False
-        )
+        pd.testing.assert_series_equal(result["total_disruptions"], expected, check_names=False)
 
     def test_significant_disruption_threshold(self, analyzer: DisruptionAnalyzer) -> None:
         result = analyzer.identify_all_disruptions()
@@ -410,14 +402,10 @@ class TestGenerateDisruptionReport:
         report = analyzer.generate_disruption_report(disruption_df)
         assert report["total_forecast_periods"] == len(disruption_df)
 
-    def test_disruption_percentage_calculation(
-        self, analyzer: DisruptionAnalyzer
-    ) -> None:
+    def test_disruption_percentage_calculation(self, analyzer: DisruptionAnalyzer) -> None:
         disruption_df = analyzer.identify_all_disruptions()
         report = analyzer.generate_disruption_report(disruption_df)
-        expected_pct = (
-            report["significant_disruptions"] / report["total_forecast_periods"]
-        ) * 100
+        expected_pct = (report["significant_disruptions"] / report["total_forecast_periods"]) * 100
         assert abs(report["disruption_percentage"] - expected_pct) < 1e-10
 
     def test_report_with_empty_dataframe(self, app_config: AppConfig) -> None:

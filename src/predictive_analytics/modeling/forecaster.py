@@ -7,10 +7,11 @@ Prophet, Auto ARIMA, and Exponential Smoothing model families.
 A convenience function :func:`generate_forecast` wraps the full
 forecast-analyse-save workflow for common use-cases.
 """
+
 from __future__ import annotations
 
 import logging
-import pickle
+import pickle  # nosec B403
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -22,10 +23,7 @@ from scipy import stats
 
 from predictive_analytics.config.logging import setup_logging
 from predictive_analytics.config.settings import AppConfig
-from predictive_analytics.exceptions import (
-    ForecastingError,
-    ModelNotTrainedError,
-)
+from predictive_analytics.exceptions import ForecastingError, ModelNotTrainedError
 
 __all__: list[str] = ["TimeSeriesForecaster", "generate_forecast"]
 
@@ -98,14 +96,12 @@ class TimeSeriesForecaster:
 
         try:
             with open(file_path, "rb") as fh:
-                model_package: Any = pickle.load(fh)  # noqa: S301
+                model_package: Any = pickle.load(fh)  # nosec B301
 
             if isinstance(model_package, dict) and "model" in model_package:
                 self.model_fit = model_package["model"]
                 self.model_meta = model_package.get("metadata", {"type": "unknown"})
-                self.target_column = model_package.get(
-                    "target_column", self.target_column
-                )
+                self.target_column = model_package.get("target_column", self.target_column)
                 self.training_end_date = model_package.get("training_end_date")
             else:
                 # Legacy format: bare model object
@@ -113,14 +109,10 @@ class TimeSeriesForecaster:
                 self.model_meta = {"type": "sarima"}
 
             logger.info("Model loaded from %s", file_path)
-            logger.info(
-                "Model type: %s", self.model_meta.get("type", "unknown")
-            )
+            logger.info("Model type: %s", self.model_meta.get("type", "unknown"))
         except Exception as exc:
             logger.error("Error loading model from %s: %s", file_path, exc)
-            raise ForecastingError(
-                f"Failed to load model from {file_path}"
-            ) from exc
+            raise ForecastingError(f"Failed to load model from {file_path}") from exc
 
     def load_data(self, file_path: Union[str, Path]) -> None:
         """Load historical data from a CSV file.
@@ -145,9 +137,7 @@ class TimeSeriesForecaster:
             logger.info("Loaded %d records from %s", len(self.data), file_path)
         except Exception as exc:
             logger.error("Error loading data from %s: %s", file_path, exc)
-            raise ForecastingError(
-                f"Failed to load data from {file_path}"
-            ) from exc
+            raise ForecastingError(f"Failed to load data from {file_path}") from exc
 
     # ------------------------------------------------------------------
     # Main forecast entry-point
@@ -178,9 +168,7 @@ class TimeSeriesForecaster:
         """
         if self.model_fit is None:
             logger.error("Model not loaded. Please load a model first.")
-            raise ModelNotTrainedError(
-                "Model not loaded. Please load a model first."
-            )
+            raise ModelNotTrainedError("Model not loaded. Please load a model first.")
 
         model_type: str = (self.model_meta or {}).get("type", "unknown").lower()
         logger.info(
@@ -235,12 +223,8 @@ class TimeSeriesForecaster:
 
             forecast_fn = dispatch.get(model_type)
             if forecast_fn is None:
-                logger.error(
-                    "Unsupported model type for forecasting: %s", model_type
-                )
-                raise ForecastingError(
-                    f"Unsupported model type for forecasting: {model_type}"
-                )
+                logger.error("Unsupported model type for forecasting: %s", model_type)
+                raise ForecastingError(f"Unsupported model type for forecasting: {model_type}")
 
             return forecast_fn()
 
@@ -272,9 +256,7 @@ class TimeSeriesForecaster:
         Returns:
             DataFrame with forecast, lower_bound, upper_bound.
         """
-        forecast_result = self.model_fit.get_forecast(
-            steps=steps, exog=exog_features
-        )
+        forecast_result = self.model_fit.get_forecast(steps=steps, exog=exog_features)
         forecast_mean: pd.Series = forecast_result.predicted_mean
 
         alpha: float = 1 - confidence_interval
@@ -330,9 +312,7 @@ class TimeSeriesForecaster:
         )
         forecast_df.index = forecast_index
 
-        logger.info(
-            "Prophet forecast generated successfully for %d steps", steps
-        )
+        logger.info("Prophet forecast generated successfully for %d steps", steps)
         return forecast_df
 
     def _forecast_auto_arima(
@@ -361,12 +341,8 @@ class TimeSeriesForecaster:
             if all(col in exog_features for col in exog_cols):
                 exog_array = exog_features[exog_cols].values
             else:
-                missing: List[str] = [
-                    col for col in exog_cols if col not in exog_features
-                ]
-                logger.warning(
-                    "Missing exogenous columns for forecast: %s", missing
-                )
+                missing: List[str] = [col for col in exog_cols if col not in exog_features]
+                logger.warning("Missing exogenous columns for forecast: %s", missing)
 
         pred: np.ndarray
         pred_ci: np.ndarray
@@ -386,9 +362,7 @@ class TimeSeriesForecaster:
         )
         forecast_df.index = forecast_index
 
-        logger.info(
-            "Auto ARIMA forecast generated successfully for %d steps", steps
-        )
+        logger.info("Auto ARIMA forecast generated successfully for %d steps", steps)
         return forecast_df
 
     def _forecast_exp_smoothing(
@@ -419,9 +393,7 @@ class TimeSeriesForecaster:
 
             z: float = float(stats.norm.ppf(0.5 + confidence_interval / 2))
 
-            widths: List[float] = [
-                sigma * z * np.sqrt(h + 1) for h in range(steps)
-            ]
+            widths: List[float] = [sigma * z * np.sqrt(h + 1) for h in range(steps)]
 
             lower_bound: Union[pd.Series, np.ndarray] = forecast - widths
             upper_bound: Union[pd.Series, np.ndarray] = forecast + widths
@@ -498,9 +470,7 @@ class TimeSeriesForecaster:
             label="95% Confidence Interval",
         )
 
-        plt.title(
-            f"{model_type} Model: Time Series Forecast ({self.target_column})"
-        )
+        plt.title(f"{model_type} Model: Time Series Forecast ({self.target_column})")
         plt.xlabel("Date")
         plt.ylabel(self.target_column)
         plt.legend()
@@ -553,9 +523,7 @@ class TimeSeriesForecaster:
             n_anomalies: int = int(result_df["is_anomaly"].sum())
             logger.info("Detected %d anomalies in actual values", n_anomalies)
         else:
-            result_df["forecast_range"] = (
-                result_df["upper_bound"] - result_df["lower_bound"]
-            )
+            result_df["forecast_range"] = result_df["upper_bound"] - result_df["lower_bound"]
 
             mean_range: float = float(result_df["forecast_range"].mean())
             std_range: float = float(result_df["forecast_range"].std())
@@ -566,15 +534,11 @@ class TimeSeriesForecaster:
             result_df["is_uncertain"] = result_df["range_z_score"] > threshold
 
             n_uncertain: int = int(result_df["is_uncertain"].sum())
-            logger.info(
-                "Detected %d periods with high uncertainty", n_uncertain
-            )
+            logger.info("Detected %d periods with high uncertainty", n_uncertain)
 
         return result_df
 
-    def analyze_forecast(
-        self, forecast_df: pd.DataFrame
-    ) -> Dict[str, float]:
+    def analyze_forecast(self, forecast_df: pd.DataFrame) -> Dict[str, float]:
         """Compute summary statistics for a forecast.
 
         Args:
@@ -710,37 +674,25 @@ def generate_forecast(
 
         model_files: List[Path] = list(model_dir.glob(f"{model_type}_*.pkl"))
         if not model_files:
-            logger.error(
-                "No %s model files found in %s", model_type, model_dir
-            )
-            raise FileNotFoundError(
-                f"No {model_type} model files found in {model_dir}"
-            )
+            logger.error("No %s model files found in %s", model_type, model_dir)
+            raise FileNotFoundError(f"No {model_type} model files found in {model_dir}")
 
         model_path = max(model_files, key=lambda p: p.stat().st_mtime)
         logger.info("Using latest model: %s", model_path)
 
-    forecaster = TimeSeriesForecaster(
-        config, model_path, target_column=target_column
-    )
+    forecaster = TimeSeriesForecaster(config, model_path, target_column=target_column)
 
     # Load historical data
     if data_path:
         forecaster.load_data(data_path)
     elif data_path is None and not save_forecast:
         preprocessed_dir: Path = Path(config.output_dir) / "preprocessed"
-        data_files: List[Path] = list(
-            preprocessed_dir.glob("*_preprocessed.csv")
-        )
+        data_files: List[Path] = list(preprocessed_dir.glob("*_preprocessed.csv"))
         if data_files:
-            latest_data: Path = max(
-                data_files, key=lambda p: p.stat().st_mtime
-            )
+            latest_data: Path = max(data_files, key=lambda p: p.stat().st_mtime)
             forecaster.load_data(latest_data)
 
-    forecast_df: pd.DataFrame = forecaster.forecast(
-        steps=steps, exog_features=exog_features
-    )
+    forecast_df: pd.DataFrame = forecaster.forecast(steps=steps, exog_features=exog_features)
 
     # Analyse
     metrics: Dict[str, float] = forecaster.analyze_forecast(forecast_df)
@@ -752,15 +704,10 @@ def generate_forecast(
     # Plot
     if plot:
         if save_plot:
-            plots_dir: Path = (
-                Path(config.output_dir) / "forecasts" / "plots"
-            )
+            plots_dir: Path = Path(config.output_dir) / "forecasts" / "plots"
             plots_dir.mkdir(parents=True, exist_ok=True)
             timestamp: str = datetime.now().strftime("%Y%m%d_%H%M%S")
-            plot_path: Path = (
-                plots_dir
-                / f"forecast_{model_type}_{steps}_steps_{timestamp}.png"
-            )
+            plot_path: Path = plots_dir / f"forecast_{model_type}_{steps}_steps_{timestamp}.png"
             forecaster.plot_forecast(forecast_df, save_path=plot_path)
         else:
             forecaster.plot_forecast(forecast_df)
@@ -771,8 +718,7 @@ def generate_forecast(
         forecasts_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         forecast_path: Path = (
-            forecasts_dir
-            / f"forecast_{model_type}_{steps}_steps_{timestamp}.csv"
+            forecasts_dir / f"forecast_{model_type}_{steps}_steps_{timestamp}.csv"
         )
         forecast_df.to_csv(forecast_path)
         logger.info("Forecast saved to %s", forecast_path)

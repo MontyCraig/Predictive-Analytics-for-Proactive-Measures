@@ -7,10 +7,11 @@ evaluation, serialization, and visualization utilities.
 A convenience function :func:`train_and_evaluate_model` wraps the full
 train-evaluate-save workflow for common use-cases.
 """
+
 from __future__ import annotations
 
 import logging
-import pickle
+import pickle  # nosec B403
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
@@ -108,13 +109,9 @@ class ModelTrainer:
             logger.info("Loaded %d records from %s", len(self.data), file_path)
         except Exception as exc:
             logger.error("Error loading data from %s: %s", file_path, exc)
-            raise ModelTrainingError(
-                f"Failed to load data from {file_path}"
-            ) from exc
+            raise ModelTrainingError(f"Failed to load data from {file_path}") from exc
 
-    def split_data(
-        self, test_size: Optional[float] = None
-    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def split_data(self, test_size: Optional[float] = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Split data into training and test sets chronologically.
 
         Args:
@@ -186,9 +183,7 @@ class ModelTrainer:
             ]
             if missing_cols:
                 logger.error("Exogenous columns not found in data: %s", missing_cols)
-                raise ModelTrainingError(
-                    f"Exogenous columns not found in data: {missing_cols}"
-                )
+                raise ModelTrainingError(f"Exogenous columns not found in data: {missing_cols}")
             train_exog = self.train_data[exog_columns]
 
         logger.info(
@@ -270,9 +265,7 @@ class ModelTrainer:
             for col in exog_columns:
                 if col not in self.train_data.columns:
                     logger.error("Regressor column not found in data: %s", col)
-                    raise ModelTrainingError(
-                        f"Regressor column not found in data: {col}"
-                    )
+                    raise ModelTrainingError(f"Regressor column not found in data: {col}")
                 self.model.add_regressor(col)
                 logger.info("Added regressor: %s", col)
 
@@ -344,9 +337,7 @@ class ModelTrainer:
             ]
             if missing_cols:
                 logger.error("Exogenous columns not found in data: %s", missing_cols)
-                raise ModelTrainingError(
-                    f"Exogenous columns not found in data: {missing_cols}"
-                )
+                raise ModelTrainingError(f"Exogenous columns not found in data: {missing_cols}")
             train_exog = self.train_data[exog_columns].values
 
         try:
@@ -422,9 +413,7 @@ class ModelTrainer:
 
         if seasonal is not None and seasonal_periods is None:
             seasonal_periods = 7
-            logger.info(
-                "No seasonal_periods specified, defaulting to %d", seasonal_periods
-            )
+            logger.info("No seasonal_periods specified, defaulting to %d", seasonal_periods)
 
         try:
             self.model = ExponentialSmoothing(
@@ -437,9 +426,7 @@ class ModelTrainer:
             self.model_fit = self.model.fit()
         except Exception as exc:
             logger.error("Exponential Smoothing model training failed: %s", exc)
-            raise ModelTrainingError(
-                "Exponential Smoothing model training failed"
-            ) from exc
+            raise ModelTrainingError("Exponential Smoothing model training failed") from exc
 
         logger.info("Exponential Smoothing model training completed successfully")
 
@@ -489,9 +476,7 @@ class ModelTrainer:
     # Evaluation
     # ------------------------------------------------------------------
 
-    def evaluate_model(
-        self, exog_columns: Optional[List[str]] = None
-    ) -> MetricsDict:
+    def evaluate_model(self, exog_columns: Optional[List[str]] = None) -> MetricsDict:
         """Evaluate the trained model on the held-out test set.
 
         Args:
@@ -509,9 +494,7 @@ class ModelTrainer:
         """
         if self.model_fit is None:
             logger.error("Model not trained. Please train a model first.")
-            raise ModelNotTrainedError(
-                "Model not trained. Please train a model first."
-            )
+            raise ModelNotTrainedError("Model not trained. Please train a model first.")
 
         model_type_str: str = self.model_meta["type"]
         logger.info("Evaluating %s model", model_type_str)
@@ -527,9 +510,7 @@ class ModelTrainer:
                     if col not in self.test_data.columns  # type: ignore[union-attr]
                 ]
                 if missing_cols:
-                    logger.error(
-                        "Exogenous columns not found in data: %s", missing_cols
-                    )
+                    logger.error("Exogenous columns not found in data: %s", missing_cols)
                     raise ModelTrainingError(
                         f"Exogenous columns not found in data: {missing_cols}"
                     )
@@ -571,9 +552,7 @@ class ModelTrainer:
                     if col not in self.test_data.columns  # type: ignore[union-attr]
                 ]
                 if missing_cols:
-                    logger.error(
-                        "Exogenous columns not found in data: %s", missing_cols
-                    )
+                    logger.error("Exogenous columns not found in data: %s", missing_cols)
                     raise ModelTrainingError(
                         f"Exogenous columns not found in data: {missing_cols}"
                     )
@@ -590,18 +569,12 @@ class ModelTrainer:
             )
 
         elif model_type_str == "exponential_smoothing":
-            predictions = self.model_fit.forecast(
-                len(self.test_data)  # type: ignore[arg-type]
-            )
+            predictions = self.model_fit.forecast(len(self.test_data))  # type: ignore[arg-type]
             predictions.index = self.test_data.index  # type: ignore[union-attr]
 
         else:
-            logger.error(
-                "Unsupported model type for evaluation: %s", model_type_str
-            )
-            raise ModelTrainingError(
-                f"Unsupported model type for evaluation: {model_type_str}"
-            )
+            logger.error("Unsupported model type for evaluation: %s", model_type_str)
+            raise ModelTrainingError(f"Unsupported model type for evaluation: {model_type_str}")
 
         # ---- Compute metrics -------------------------------------------------
         actuals: pd.Series = self.test_data[self.target_column]  # type: ignore[index]
@@ -610,9 +583,7 @@ class ModelTrainer:
         mse: float = float(mean_squared_error(actuals, predictions))
         rmse: float = float(np.sqrt(mse))
         r2: float = float(r2_score(actuals, predictions))
-        mape: float = float(
-            np.mean(np.abs((actuals - predictions) / actuals)) * 100
-        )
+        mape: float = float(np.mean(np.abs((actuals - predictions) / actuals)) * 100)
 
         metrics: MetricsDict = {
             "mae": mae,
@@ -644,9 +615,7 @@ class ModelTrainer:
         """
         if self.model_fit is None:
             logger.error("Model not trained. Please train a model first.")
-            raise ModelNotTrainedError(
-                "Model not trained. Please train a model first."
-            )
+            raise ModelNotTrainedError("Model not trained. Please train a model first.")
 
         file_path = Path(file_path)
         file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -657,9 +626,7 @@ class ModelTrainer:
                 "metadata": self.model_meta,
                 "target_column": self.target_column,
                 "training_end_date": (
-                    self.train_data.index[-1]
-                    if self.train_data is not None
-                    else None
+                    self.train_data.index[-1] if self.train_data is not None else None
                 ),
             }
 
@@ -669,9 +636,7 @@ class ModelTrainer:
             logger.info("Model saved to %s", file_path)
         except Exception as exc:
             logger.error("Error saving model to %s: %s", file_path, exc)
-            raise ModelTrainingError(
-                f"Failed to save model to {file_path}"
-            ) from exc
+            raise ModelTrainingError(f"Failed to save model to {file_path}") from exc
 
     def load_model(self, file_path: Union[str, Path]) -> None:
         """Load a previously saved model from disk.
@@ -691,14 +656,12 @@ class ModelTrainer:
 
         try:
             with open(file_path, "rb") as fh:
-                model_package: Any = pickle.load(fh)  # noqa: S301
+                model_package: Any = pickle.load(fh)  # nosec B301
 
             if isinstance(model_package, dict) and "model" in model_package:
                 self.model_fit = model_package["model"]
                 self.model_meta = model_package.get("metadata", {"type": "unknown"})
-                self.target_column = model_package.get(
-                    "target_column", self.target_column
-                )
+                self.target_column = model_package.get("target_column", self.target_column)
             else:
                 # Legacy format: bare model object
                 self.model_fit = model_package
@@ -708,9 +671,7 @@ class ModelTrainer:
             logger.info("Model type: %s", self.model_meta.get("type", "unknown"))
         except Exception as exc:
             logger.error("Error loading model from %s: %s", file_path, exc)
-            raise ModelTrainingError(
-                f"Failed to load model from {file_path}"
-            ) from exc
+            raise ModelTrainingError(f"Failed to load model from {file_path}") from exc
 
     # ------------------------------------------------------------------
     # Visualisation
@@ -728,9 +689,7 @@ class ModelTrainer:
         """
         if self.model_fit is None or self.predictions is None:
             logger.error("Model not evaluated. Please evaluate the model first.")
-            raise ModelNotTrainedError(
-                "Model not evaluated. Please evaluate the model first."
-            )
+            raise ModelNotTrainedError("Model not evaluated. Please evaluate the model first.")
 
         import matplotlib.pyplot as plt
         import seaborn as sns
@@ -855,9 +814,7 @@ def train_and_evaluate_model(
             "auto_arima": lambda: trainer.train_auto_arima_model(
                 exog_columns=exog_columns, **model_params
             ),
-            "exp_smoothing": lambda: trainer.train_exponential_smoothing_model(
-                **model_params
-            ),
+            "exp_smoothing": lambda: trainer.train_exponential_smoothing_model(**model_params),
         }
 
         trainer_fn = dispatch.get(model_type)
