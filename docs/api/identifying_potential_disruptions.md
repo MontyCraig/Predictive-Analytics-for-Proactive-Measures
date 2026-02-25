@@ -156,8 +156,8 @@ Analyze potential disruptions in time series forecast.
 ### Basic Usage
 
 ```python
-from utils.config import get_config
-from identifying_potential_disruptions import analyze_disruptions
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.disruption.analyzer import analyze_disruptions
 
 # Load configuration
 config = get_config()
@@ -178,8 +178,8 @@ print(f"Significant disruptions: {report['significant_disruptions']} ({report['d
 ### Custom Analysis with Existing Forecast
 
 ```python
-from utils.config import get_config
-from identifying_potential_disruptions import DisruptionAnalyzer
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.disruption.analyzer import DisruptionAnalyzer
 from pathlib import Path
 
 # Load configuration
@@ -210,8 +210,8 @@ analyzer.plot_disruptions(trend_df, save_path="output/disruptions/trend_disrupti
 ### Comprehensive Disruption Analysis
 
 ```python
-from utils.config import get_config
-from identifying_potential_disruptions import DisruptionAnalyzer
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.disruption.analyzer import DisruptionAnalyzer
 import pandas as pd
 from pathlib import Path
 

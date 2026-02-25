@@ -6,7 +6,7 @@ This guide will walk you through the process of setting up the Predictive Analyt
 
 Before installation, ensure you have the following:
 
-1. **Python 3.9+**: The framework is built on Python 3.9 or higher
+1. **Python 3.10+**: The framework is built on Python 3.10 or higher
 2. **Git**: To clone the repository
 3. **Conda** (recommended) or **virtualenv**: For environment management
 4. **Alpha Vantage API Key**: Get a free API key from [Alpha Vantage](https://www.alphavantage.co/support/#api-key)
@@ -16,7 +16,7 @@ Before installation, ensure you have the following:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/Predictive-Analytics-for-Proactive-Measures.git
+git clone https://github.com/MontyCraig/Predictive-Analytics-for-Proactive-Measures.git
 cd Predictive-Analytics-for-Proactive-Measures
 ```
 
@@ -25,7 +25,7 @@ cd Predictive-Analytics-for-Proactive-Measures
 **Option A: Using Conda (Recommended)**
 
 ```bash
-conda create -n predictive_analytics python=3.9
+conda create -n predictive_analytics python=3.10
 conda activate predictive_analytics
 ```
 
@@ -39,7 +39,7 @@ source venv/bin/activate  # On Windows, use: venv\\Scripts\\activate
 ### Step 3: Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
 
 ### Step 4: Set Up Environment Variables
@@ -61,7 +61,7 @@ ALPHA_VANTAGE_API_KEY=your_api_key_here
 Run the following command to verify your installation:
 
 ```bash
-python main.py --help
+predictive-analytics --help
 ```
 
 You should see the help message with available commands and options.
@@ -91,7 +91,7 @@ docker run -it --env ALPHA_VANTAGE_API_KEY=your_api_key_here predictive-analytic
    If you encounter errors about missing packages, try reinstalling the dependencies:
 
    ```bash
-   pip install -r requirements.txt --force-reinstall
+   pip install -e ".[dev]" --force-reinstall
    ```
 
 2. **API Key Issues**

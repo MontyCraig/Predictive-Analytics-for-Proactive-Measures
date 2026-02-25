@@ -120,8 +120,8 @@ Generate and analyze forecasts.
 ### Basic Usage
 
 ```python
-from utils.config import get_config
-from forecasting_and_prediction import generate_forecast
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.forecaster import generate_forecast
 
 # Load configuration
 config = get_config()
@@ -137,8 +137,8 @@ forecast_df = generate_forecast(
 ### Customized Forecasting
 
 ```python
-from utils.config import get_config
-from forecasting_and_prediction import TimeSeriesForecaster
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.forecaster import TimeSeriesForecaster
 from pathlib import Path
 
 # Load configuration
@@ -177,8 +177,8 @@ print(f"Volatility: {metrics['volatility']:.4f}")
 ### Anomaly Detection
 
 ```python
-from utils.config import get_config
-from forecasting_and_prediction import TimeSeriesForecaster
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.forecaster import TimeSeriesForecaster
 import pandas as pd
 
 # Load configuration

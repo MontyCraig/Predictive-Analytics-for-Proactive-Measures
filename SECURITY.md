@@ -12,7 +12,7 @@
 If you discover a security vulnerability in this project, please report it responsibly:
 
 1. **Do not** open a public GitHub issue for security vulnerabilities.
-2. Email the maintainer directly or use GitHub's private vulnerability reporting feature.
+2. Report via [GitHub private vulnerability reporting](https://github.com/MontyCraig/Predictive-Analytics-for-Proactive-Measures/security/advisories/new).
 3. Include a clear description of the vulnerability, steps to reproduce, and potential impact.
 4. Allow reasonable time for a fix before public disclosure.
 

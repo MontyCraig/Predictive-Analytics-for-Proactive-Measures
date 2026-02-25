@@ -10,36 +10,36 @@ from predictive_analytics.config.logging import setup_logging
 
 class TestSetupLogging:
     def test_returns_logger(self) -> None:
-        result = setup_logging()
+        result = setup_logging(force_reset=True)
         assert isinstance(result, logging.Logger)
         assert result.name == "predictive_analytics"
 
     def test_default_level_is_info(self) -> None:
-        result = setup_logging()
+        result = setup_logging(force_reset=True)
         assert result.level == logging.INFO
 
     def test_custom_level(self) -> None:
-        result = setup_logging(level=logging.DEBUG)
+        result = setup_logging(level=logging.DEBUG, force_reset=True)
         assert result.level == logging.DEBUG
 
     def test_has_console_handler(self) -> None:
-        result = setup_logging()
+        result = setup_logging(force_reset=True)
         assert any(isinstance(h, logging.StreamHandler) for h in result.handlers)
 
     def test_no_file_handler_by_default(self) -> None:
-        result = setup_logging()
+        result = setup_logging(force_reset=True)
         assert not any(isinstance(h, logging.FileHandler) for h in result.handlers)
 
     def test_file_handler_when_log_file_provided(self, tmp_path: Path) -> None:
         log_file = str(tmp_path / "test.log")
-        result = setup_logging(log_file=log_file)
+        result = setup_logging(log_file=log_file, force_reset=True)
         file_handlers = [h for h in result.handlers if isinstance(h, logging.FileHandler)]
         assert len(file_handlers) == 1
         assert file_handlers[0].baseFilename == str(tmp_path / "test.log")
 
     def test_file_handler_writes_log(self, tmp_path: Path) -> None:
         log_file = tmp_path / "test.log"
-        result = setup_logging(log_file=str(log_file))
+        result = setup_logging(log_file=str(log_file), force_reset=True)
         result.info("hello from test")
         # Flush handlers so content is written
         for h in result.handlers:
@@ -48,11 +48,27 @@ class TestSetupLogging:
         assert "hello from test" in content
 
     def test_clears_existing_handlers(self) -> None:
-        first = setup_logging()
+        first = setup_logging(force_reset=True)
         handler_count_first = len(first.handlers)
-        second = setup_logging()
+        second = setup_logging(force_reset=True)
         assert len(second.handlers) == handler_count_first
 
     def test_propagate_is_false(self) -> None:
-        result = setup_logging()
+        result = setup_logging(force_reset=True)
         assert result.propagate is False
+
+    def test_idempotent_without_force_reset(self) -> None:
+        """Calling setup_logging without force_reset returns existing logger."""
+        first = setup_logging(force_reset=True)
+        handler_count = len(first.handlers)
+        # Second call without force_reset should return same logger as-is.
+        second = setup_logging()
+        assert second is first
+        assert len(second.handlers) == handler_count
+
+    def test_idempotent_preserves_level(self) -> None:
+        """Level argument is ignored when handlers exist and force_reset=False."""
+        setup_logging(level=logging.INFO, force_reset=True)
+        result = setup_logging(level=logging.DEBUG)
+        # Should still be INFO because idempotent path returned early.
+        assert result.level == logging.INFO

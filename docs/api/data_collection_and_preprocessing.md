@@ -93,8 +93,8 @@ Main interface function that orchestrates data collection and preprocessing.
 ### Basic Usage
 
 ```python
-from utils.config import get_config
-from data_collection_and_preprocessing import collect_and_preprocess_data
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.collection.preprocessing import collect_and_preprocess_data
 
 # Load configuration
 config = get_config()
@@ -106,8 +106,8 @@ data = collect_and_preprocess_data(config, symbol="MSFT")
 ### Custom Symbol and Settings
 
 ```python
-from utils.config import get_config
-from data_collection_and_preprocessing import collect_and_preprocess_data
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.collection.preprocessing import collect_and_preprocess_data
 
 # Load configuration
 config = get_config()
@@ -119,8 +119,8 @@ data = collect_and_preprocess_data(config, symbol="AAPL", save=False)
 ### Direct Access to Alpha Vantage Client
 
 ```python
-from utils.config import get_config
-from data_collection_and_preprocessing import AlphaVantageClient
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.collection.preprocessing import AlphaVantageClient
 
 # Load configuration
 config = get_config()

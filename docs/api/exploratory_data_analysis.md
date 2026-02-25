@@ -114,7 +114,7 @@ Load data from a CSV file.
 ### Basic Usage
 
 ```python
-from exploratory_data_analysis import TimeSeriesExplorer
+from predictive_analytics.analysis.explorer import TimeSeriesExplorer
 import pandas as pd
 
 # Load data
@@ -130,7 +130,7 @@ explorer.run_full_analysis()
 ### Custom Analysis
 
 ```python
-from exploratory_data_analysis import TimeSeriesExplorer
+from predictive_analytics.analysis.explorer import TimeSeriesExplorer
 import pandas as pd
 
 # Load data
@@ -152,7 +152,7 @@ explorer.plot_heatmap(columns=['open', 'high', 'low', 'close', 'volume'])
 ### Saving Plots
 
 ```python
-from exploratory_data_analysis import TimeSeriesExplorer
+from predictive_analytics.analysis.explorer import TimeSeriesExplorer
 from pathlib import Path
 import pandas as pd
 

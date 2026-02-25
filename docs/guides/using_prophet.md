@@ -38,7 +38,7 @@ MODEL_TYPE=prophet
 Alternatively, you can set it on the command line when running the model:
 
 ```bash
-python model_selection_and_training.py --model prophet
+predictive-analytics run --model prophet
 ```
 
 ### Prophet Configuration Options
@@ -73,7 +73,7 @@ PROPHET_SEASONALITY_PRIOR_SCALE=10.0
 To train a Prophet model from the command line:
 
 ```bash
-python model_selection_and_training.py --model prophet --symbol MSFT --exog volume,day_of_week
+predictive-analytics run --model prophet --symbol MSFT --exog volume,day_of_week
 ```
 
 This command:
@@ -84,8 +84,8 @@ This command:
 ### Using the Python API
 
 ```python
-from utils.config import get_config
-from model_selection_and_training import train_and_evaluate_model
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.trainer import train_and_evaluate_model
 
 # Load configuration
 config = get_config()
@@ -119,7 +119,7 @@ for metric, value in metrics.items():
 To generate a forecast using a trained Prophet model:
 
 ```bash
-python forecasting_and_prediction.py --model-type prophet --steps 30
+predictive-analytics run --model-type prophet --steps 30
 ```
 
 This command:
@@ -129,8 +129,8 @@ This command:
 ### Using the Python API
 
 ```python
-from utils.config import get_config
-from forecasting_and_prediction import generate_forecast
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.forecaster import generate_forecast
 
 # Load configuration
 config = get_config()
@@ -149,7 +149,7 @@ print("Forecast Summary:")
 print(forecast_df.head())
 
 # Analyze the forecast
-from forecasting_and_prediction import TimeSeriesForecaster
+from predictive_analytics.modeling.forecaster import TimeSeriesForecaster
 
 forecaster = TimeSeriesForecaster(config)
 analysis = forecaster.analyze_forecast(forecast_df)
@@ -167,10 +167,10 @@ for metric, value in analysis.items():
 Here's a complete example showing how to collect data, train a Prophet model, and generate forecasts:
 
 ```python
-from utils.config import get_config
-from data_collection_and_preprocessing import collect_and_preprocess_data
-from model_selection_and_training import ModelTrainer
-from forecasting_and_prediction import TimeSeriesForecaster
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.collection.preprocessing import collect_and_preprocess_data
+from predictive_analytics.modeling.trainer import ModelTrainer
+from predictive_analytics.modeling.forecaster import TimeSeriesForecaster
 
 # 1. Set up configuration
 config = get_config()
@@ -236,7 +236,7 @@ Prophet allows you to add custom seasonality patterns. You can do this by extend
 
 ```python
 # After creating a model trainer and before training
-from model_selection_and_training import ModelTrainer
+from predictive_analytics.modeling.trainer import ModelTrainer
 trainer = ModelTrainer(config, data)
 trainer.split_data()
 
@@ -268,7 +268,7 @@ Prophet can account for holiday effects. Here's how to incorporate holidays:
 ```python
 import pandas as pd
 from datetime import datetime
-from model_selection_and_training import ModelTrainer
+from predictive_analytics.modeling.trainer import ModelTrainer
 
 # Define holidays
 holidays = pd.DataFrame({

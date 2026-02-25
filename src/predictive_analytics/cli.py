@@ -114,10 +114,15 @@ def _run_eda(
 
     # Load preprocessed data from the output directory.
     csv_files = list(output_path.glob("*preprocessed*.csv"))
-    if csv_files:
-        data = pd.read_csv(csv_files[0], index_col=0, parse_dates=True)
-    else:
-        data = pd.DataFrame()
+    if not csv_files:
+        typer.secho(
+            "No preprocessed data found. Run collection first.",
+            fg="yellow",
+            err=True,
+        )
+        raise typer.Exit(1)
+
+    data = pd.read_csv(csv_files[0], index_col=0, parse_dates=True)
 
     explorer = TimeSeriesExplorer(data=data, target_column="close")
     save_dir: Optional[Path] = output_path / "eda" if not show_plots else None
@@ -253,7 +258,8 @@ def run(
         30,
         "--forecast-steps",
         min=1,
-        help="Number of time steps to forecast.",
+        max=365,
+        help="Number of time steps to forecast (1-365).",
     ),
 ) -> None:
     """Run the full predictive-analytics pipeline for a given stock symbol."""
@@ -266,6 +272,7 @@ def run(
     try:
         config = get_config(env_file)
         output_path = _resolve_output_dir(output_dir, symbol)
+        config.output_dir = str(output_path)
 
         if not skip_collection:
             _run_collection(config, symbol)

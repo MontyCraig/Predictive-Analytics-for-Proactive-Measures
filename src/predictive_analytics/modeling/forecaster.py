@@ -200,8 +200,9 @@ class TimeSeriesForecaster:
             else:
                 freq = self._infer_frequency_fallback(self.data.index)
 
+        offset = pd.tseries.frequencies.to_offset(freq)
         forecast_index: pd.DatetimeIndex = pd.date_range(
-            start=last_date + pd.Timedelta(days=1),
+            start=last_date + offset,
             periods=steps,
             freq=freq,
         )

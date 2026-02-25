@@ -70,7 +70,7 @@ The main module provides a comprehensive command-line interface with the followi
 Run the complete workflow for the default stock (Microsoft):
 
 ```bash
-python main.py
+predictive-analytics run
 ```
 
 ### Custom Stock Analysis
@@ -78,7 +78,7 @@ python main.py
 Analyze a different stock symbol:
 
 ```bash
-python main.py --symbol AAPL
+predictive-analytics run --symbol AAPL
 ```
 
 ### Skip Certain Steps
@@ -86,7 +86,7 @@ python main.py --symbol AAPL
 Run only specific parts of the workflow:
 
 ```bash
-python main.py --symbol GOOGL --skip-collection --skip-eda
+predictive-analytics run --symbol GOOGL --skip-collection --skip-eda
 ```
 
 ### Custom API Key
@@ -94,7 +94,7 @@ python main.py --symbol GOOGL --skip-collection --skip-eda
 Provide an Alpha Vantage API key:
 
 ```bash
-python main.py --api-key YOUR_API_KEY
+predictive-analytics run --api-key YOUR_API_KEY
 ```
 
 ### Interactive Plots
@@ -102,7 +102,7 @@ python main.py --api-key YOUR_API_KEY
 Show plots interactively instead of saving them:
 
 ```bash
-python main.py --show-plots
+predictive-analytics run --show-plots
 ```
 
 ### Custom Forecast Horizon
@@ -110,7 +110,7 @@ python main.py --show-plots
 Specify the number of days to forecast:
 
 ```bash
-python main.py --forecast-steps 60
+predictive-analytics run --forecast-steps 60
 ```
 
 ## Implementation Details
@@ -138,7 +138,7 @@ The module manages outputs as follows:
 ## Integration Points
 
 The main module integrates with:
-- Command-line argument parser (argparse)
+- Typer CLI framework
 - Configuration management system
 - All other modules in the framework
 - File system for environment setup and output management
