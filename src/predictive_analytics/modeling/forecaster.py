@@ -109,7 +109,8 @@ class TimeSeriesForecaster:
                 self.model_meta = {"type": "sarima"}
 
             logger.info("Model loaded from %s", file_path)
-            logger.info("Model type: %s", self.model_meta.get("type", "unknown"))
+            meta_type = self.model_meta.get("type", "unknown") if self.model_meta else "unknown"
+            logger.info("Model type: %s", meta_type)
         except Exception as exc:
             logger.error("Error loading model from %s: %s", file_path, exc)
             raise ForecastingError(f"Failed to load model from {file_path}") from exc

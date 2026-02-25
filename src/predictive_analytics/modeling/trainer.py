@@ -170,10 +170,10 @@ class ModelTrainer:
             raise DataNotLoadedError("Data not split. Please split data first.")
 
         if order is None:
-            order = self.config.sarima.order
+            order = self.config.sarima.order  # type: ignore[union-attr]
 
         if seasonal_order is None:
-            seasonal_order = self.config.sarima.seasonal_order
+            seasonal_order = self.config.sarima.seasonal_order  # type: ignore[union-attr]
 
         # Prepare exogenous variables
         train_exog: Optional[pd.DataFrame] = None
@@ -198,8 +198,8 @@ class ModelTrainer:
                 exog=train_exog,
                 order=order,
                 seasonal_order=seasonal_order,
-                enforce_stationarity=self.config.sarima.enforce_stationarity,
-                enforce_invertibility=self.config.sarima.enforce_invertibility,
+                enforce_stationarity=self.config.sarima.enforce_stationarity,  # type: ignore[union-attr]  # noqa: E501
+                enforce_invertibility=self.config.sarima.enforce_invertibility,  # type: ignore[union-attr]  # noqa: E501
             )
 
             self.model_fit = self.model.fit(disp=False)

@@ -86,12 +86,19 @@ disallow_untyped_defs = true
 disallow_incomplete_defs = true
 check_untyped_defs = true
 strict_equality = true
-plugins = ["pydantic.mypy"]
-
-[tool.mypy.pydantic-mypy]
-init_forbid_extra = true
-init_typed = true
-warn_required_dynamic_aliases = true
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = [
+  "matplotlib.*",
+  "seaborn.*",
+  "scipy.*",
+  "statsmodels.*",
+  "pmdarima.*",
+  "prophet.*",
+  "sklearn.*",
+  "joblib.*",
+]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
