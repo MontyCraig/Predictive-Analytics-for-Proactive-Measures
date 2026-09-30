@@ -1,6 +1,6 @@
 Integrating Results into Business Strategy
 
-Supply Chain Optimization: 
+Supply Chain Optimization:
 
 Adjust procurement and inventory levels based on forecasted demand.
 

@@ -5,38 +5,63 @@ A comprehensive guide for building robust, user-friendly command-line interface 
 ## Table of Contents
 
 1. **Project Structure**
+
     - Application Layout
+
     - Command Organization
+
     - Configuration Management
+
     - Plugin Architecture
+
     - Package Distribution
 
 2. **CLI Framework**
+
     - Click vs Typer
+
     - Command Groups
+
     - Arguments & Options
+
     - Input Validation
+
     - Help Documentation
 
 3. **User Experience**
+
     - Progress Feedback
+
     - Error Handling
+
     - Color & Formatting
+
     - Interactive Features
+
     - Shell Completion
 
 4. **Advanced Features**
+
     - Configuration Files
+
     - Environment Variables
+
     - Logging
+
     - Plugin System
+
     - Shell Integration
 
 5. **Testing & Quality**
+
     - Unit Testing
+
     - Integration Testing
+
     - Documentation
+
     - Distribution
+
     - Maintenance
 
 ---
@@ -44,7 +69,8 @@ A comprehensive guide for building robust, user-friendly command-line interface 
 ## 1. Project Structure
 
 ### Basic Application Layout
-```
+
+```text
 cli_project/
 ├── src/
 │   └── myapp/
@@ -67,11 +93,14 @@ cli_project/
 ├── pyproject.toml
 ├── README.md
 └── CHANGELOG.md
-```
 
+```text
 ### Command Organization
+
 ```python
+
 # src/myapp/cli.py
+
 import typer
 from typing import Optional
 from pathlib import Path
@@ -84,6 +113,7 @@ app = typer.Typer(
 )
 
 # Add command groups
+
 app.add_typer(users.app, name="users")
 app.add_typer(config.app, name="config")
 app.add_typer(utils.app, name="utils")
@@ -92,6 +122,7 @@ app.add_typer(utils.app, name="utils")
 def callback():
     """
     MyApp CLI - A tool for managing something awesome.
+
     """
     pass
 
@@ -100,15 +131,18 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
 
+```text
 ---
 
 ## 2. CLI Framework
 
 ### Command Implementation
+
 ```python
+
 # src/myapp/commands/users.py
+
 import typer
 from typing import Optional, List
 from pathlib import Path
@@ -132,8 +166,10 @@ def create(
     """
     try:
         # Implementation
+
         console.print(f"Creating user: {username}")
         # ... user creation logic ...
+
         console.print(f"✓ User {username} created successfully", style="green")
     except Exception as e:
         console.print(f"Error: {str(e)}", style="red")
@@ -153,9 +189,11 @@ def list(
     """
     try:
         # Implementation
+
         users = [{"username": "user1", "email": "user1@example.com"}]
         if format == "table":
             # Use rich tables for display
+
             table = Table(show_header=True)
             table.add_column("Username")
             table.add_column("Email")
@@ -166,6 +204,7 @@ def list(
             console.print_json(data=users)
         elif format == "csv":
             # Output CSV format
+
             import csv
             import sys
             writer = csv.DictWriter(sys.stdout, fieldnames=["username", "email"])
@@ -174,11 +213,14 @@ def list(
     except Exception as e:
         console.print(f"Error: {str(e)}", style="red")
         raise typer.Exit(1)
-```
 
+```text
 ### Input Validation
+
 ```python
+
 # src/myapp/utils/validators.py
+
 from typing import Any, Optional
 import re
 import typer
@@ -200,6 +242,7 @@ def validate_path(
     return value
 
 # Usage in commands
+
 @app.command()
 def create(
     email: str = typer.Option(
@@ -216,15 +259,18 @@ def create(
     )
 ):
     pass
-```
 
+```text
 ---
 
 ## 3. User Experience
 
 ### Progress Feedback
+
 ```python
+
 # src/myapp/utils/console.py
+
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.prompt import Prompt, Confirm
@@ -249,17 +295,22 @@ def with_spinner(message: str):
     return decorator
 
 # Usage
+
 @app.command()
 @with_spinner("Processing data...")
 def process_data(file: Path):
     # Long-running operation
+
     process_file(file)
     console.print("✓ Data processed successfully", style="green")
-```
 
+```text
 ### Interactive Features
+
 ```python
+
 # src/myapp/utils/interactive.py
+
 from rich.prompt import Prompt, Confirm
 from rich.console import Console
 
@@ -268,8 +319,9 @@ console = Console()
 def interactive_config():
     """Interactive configuration setup."""
     console.print("=== Configuration Setup ===", style="bold blue")
-    
+
     # Get user input
+
     host = Prompt.ask(
         "Enter database host",
         default="localhost"
@@ -278,18 +330,21 @@ def interactive_config():
         "Enter database port",
         default="5432"
     ))
-    
+
     # Confirm dangerous operations
+
     if Confirm.ask("Do you want to reset the database?"):
         console.print("Resetting database...", style="yellow")
         # ... implementation ...
-    
+
+
     return {
         "host": host,
         "port": port
     }
 
 # Usage in commands
+
 @app.command()
 def configure():
     """
@@ -298,15 +353,18 @@ def configure():
     config = interactive_config()
     save_config(config)
     console.print("✓ Configuration saved", style="green")
-```
 
+```text
 ---
 
 ## 4. Advanced Features
 
 ### Configuration Management
+
 ```python
+
 # src/myapp/config/settings.py
+
 from pathlib import Path
 from typing import Optional, Dict, Any
 import tomli
@@ -320,7 +378,7 @@ class Settings(BaseSettings):
     config_path: Path = Field(
         default_factory=lambda: Path.home() / ".myapp" / "config.toml"
     )
-    
+
     class Config:
         env_prefix = "MYAPP_"
         env_file = ".env"
@@ -329,10 +387,10 @@ def load_config(config_path: Optional[Path] = None) -> Dict[str, Any]:
     """Load configuration from TOML file."""
     if config_path is None:
         config_path = Settings().config_path
-    
+
     if not config_path.exists():
         return {}
-    
+
     with config_path.open("rb") as f:
         return tomli.load(f)
 
@@ -340,15 +398,18 @@ def save_config(config: Dict[str, Any], config_path: Optional[Path] = None):
     """Save configuration to TOML file."""
     if config_path is None:
         config_path = Settings().config_path
-    
+
     config_path.parent.mkdir(parents=True, exist_ok=True)
     with config_path.open("wb") as f:
         tomli_w.dump(config, f)
-```
 
+```text
 ### Plugin System
+
 ```python
+
 # src/myapp/plugins/base.py
+
 from typing import Protocol, Dict, Any
 from pathlib import Path
 import importlib.util
@@ -356,16 +417,16 @@ import pkg_resources
 
 class PluginProtocol(Protocol):
     """Protocol defining the plugin interface."""
-    
+
     @property
     def name(self) -> str:
         """Plugin name."""
         ...
-    
+
     def initialize(self, config: Dict[str, Any]) -> None:
         """Initialize the plugin."""
         ...
-    
+
     def execute(self, *args, **kwargs) -> Any:
         """Execute plugin functionality."""
         ...
@@ -373,28 +434,31 @@ class PluginProtocol(Protocol):
 class PluginManager:
     def __init__(self):
         self.plugins: Dict[str, PluginProtocol] = {}
-    
+
     def load_plugins(self):
         """Load all installed plugins."""
         for entry_point in pkg_resources.iter_entry_points("myapp.plugins"):
             plugin_class = entry_point.load()
             plugin = plugin_class()
             self.plugins[plugin.name] = plugin
-    
+
     def get_plugin(self, name: str) -> PluginProtocol:
         """Get plugin by name."""
         if name not in self.plugins:
             raise ValueError(f"Plugin not found: {name}")
         return self.plugins[name]
-```
 
+```text
 ---
 
 ## 5. Testing
 
 ### Command Testing
+
 ```python
+
 # tests/test_commands.py
+
 from typer.testing import CliRunner
 from myapp.cli import app
 import pytest
@@ -439,45 +503,70 @@ def test_list_users_format(format):
         ["users", "list", "--format", format]
     )
     assert result.exit_code == 0
-```
 
+```text
 ---
 
 ## Best Practices
 
 1. **Command Design**
+
    - Use clear, descriptive command names
+
    - Provide sensible defaults
+
    - Implement proper help documentation
+
    - Support both interactive and non-interactive modes
+
    - Follow the principle of least surprise
 
 2. **User Experience**
+
    - Provide clear feedback
+
    - Use colors and formatting judiciously
+
    - Implement progress indicators
+
    - Handle errors gracefully
+
    - Support shell completion
 
 3. **Configuration**
+
    - Use configuration files
+
    - Support environment variables
+
    - Implement secure credential handling
+
    - Provide configuration validation
+
    - Support multiple environments
 
 4. **Testing**
+
    - Test command-line parsing
+
    - Test input validation
+
    - Test output formatting
+
    - Mock external dependencies
+
    - Test error conditions
 
 5. **Documentation**
+
    - Provide clear command help
+
    - Document configuration options
+
    - Include usage examples
+
    - Document installation process
+
    - Maintain changelog
 
 ---
@@ -485,19 +574,29 @@ def test_list_users_format(format):
 ## Conclusion
 
 Following these CLI standards ensures:
+
 - User-friendly command-line interfaces
+
 - Robust error handling
+
 - Consistent user experience
+
 - Maintainable code structure
+
 - Comprehensive testing
 
 Remember to:
+
 - Follow CLI best practices
+
 - Provide comprehensive documentation
+
 - Implement proper testing
+
 - Handle errors gracefully
+
 - Consider user experience
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
