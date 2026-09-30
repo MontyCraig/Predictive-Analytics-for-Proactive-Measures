@@ -94,7 +94,7 @@ my_project/
 ├── templates/
 └── docs/
 
-```text
+```
 ### App Organization
 
 - Keep apps small and focused on a single responsibility
@@ -135,7 +135,7 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
 ]
 
-```text
+```
 ### URL Configuration
 
 ```python
@@ -152,7 +152,7 @@ urlpatterns = [
     path('', include('apps.core.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-```text
+```
 ---
 
 ## 2. Models & Database
@@ -186,7 +186,7 @@ class Product(BaseModel):
     def __str__(self):
         return self.name
 
-```text
+```
 ### QuerySet Best Practices
 
 ```python
@@ -209,7 +209,7 @@ class ProductManager(models.Manager):
     def active_with_related(self):
         return self.get_queryset().active().with_related()
 
-```text
+```
 ---
 
 ## 3. Views & Templates
@@ -234,7 +234,7 @@ class ProductListView(LoginRequiredMixin, ListView):
         context['title'] = 'Products'
         return context
 
-```text
+```
 ### Template Organization
 
 ```html
@@ -258,7 +258,7 @@ class ProductListView(LoginRequiredMixin, ListView):
 </body>
 </html>
 
-```text
+```
 ---
 
 ## 4. Security
@@ -301,7 +301,7 @@ SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-```text
+```
 ---
 
 ## 5. Performance
@@ -340,7 +340,7 @@ from django.utils.decorators import method_decorator
 class ProductListView(ListView):
     # ... view implementation
 
-```text
+```
 ### Asynchronous Views
 
 ```python
@@ -358,7 +358,7 @@ async def async_product_view(request, pk):
     }
     return JsonResponse(data)
 
-```text
+```
 ---
 
 ## Testing
@@ -386,7 +386,7 @@ class ProductModelTest(TestCase):
     def test_product_str_representation(self):
         self.assertEqual(str(self.product), 'Test Product')
 
-```text
+```
 ### Factory Pattern for Tests
 
 ```python
@@ -406,7 +406,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     email = factory.LazyFunction(lambda: fake.email())
     is_active = True
 
-```text
+```
 ---
 
 ## Deployment
@@ -438,7 +438,7 @@ DJANGO_SECRET_KEY=your-secret-key
 DATABASE_URL=postgres://user:password@localhost:5432/dbname
 REDIS_URL=redis://localhost:6379/1
 
-```text
+```
 ---
 
 ## Documentation
@@ -466,7 +466,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-```text
+```
 ---
 
 ## Conclusion
@@ -487,4 +487,4 @@ Remember to regularly review and update these standards as Django evolves and ne
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

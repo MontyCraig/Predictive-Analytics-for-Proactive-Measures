@@ -220,7 +220,7 @@ disruption_df, report = analyze_disruptions(
 print(f"Total forecast periods: {report['total_forecast_periods']}")
 print(f"Significant disruptions: {report['significant_disruptions']} ({report['disruption_percentage']:.2f}%)")
 
-```text
+```
 ### Custom Analysis with Existing Forecast
 
 ```python
@@ -258,7 +258,7 @@ print(f"Volatility disruptions: {volatility_disruptions}")
 
 analyzer.plot_disruptions(trend_df, save_path="output/disruptions/trend_disruptions.png")
 
-```text
+```
 ### Comprehensive Disruption Analysis
 
 ```python
@@ -311,7 +311,7 @@ print("Significant disruption dates:")
 for date in report["significant_disruption_dates"]:
     print(f"  - {date.strftime('%Y-%m-%d')}")
 
-```text
+```
 ## Implementation Details
 
 ### Disruption Types

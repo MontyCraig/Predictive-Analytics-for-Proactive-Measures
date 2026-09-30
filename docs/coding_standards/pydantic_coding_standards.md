@@ -87,7 +87,7 @@ class UserBase(BaseModel):
 
         validate_assignment = True  # Validate on attribute assignment
 
-```text
+```
 ### Field Types & Validation
 
 ```python
@@ -117,7 +117,7 @@ class Product(BaseModel):
             }
         }
 
-```text
+```
 ---
 
 ## 2. Validation & Type Safety
@@ -168,7 +168,7 @@ class User(BaseModel):
             raise ValueError('Passwords do not match')
         return v
 
-```text
+```
 ### Custom Types
 
 ```python
@@ -195,7 +195,7 @@ class Contact(BaseModel):
     email: EmailStr
     address: Address
 
-```text
+```
 ---
 
 ## 3. Data Conversion
@@ -231,7 +231,7 @@ dict_data = user.model_dump()  # For dict conversion
 
 formatted_data = user.dict_with_formatted_datetime()
 
-```text
+```
 ### Custom Encoders
 
 ```python
@@ -255,7 +255,7 @@ class Transaction(CustomJSONEncoder):
     timestamp: datetime
     data: bytes
 
-```text
+```
 ---
 
 ## 4. Advanced Features
@@ -283,7 +283,7 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     return Settings()
 
-```text
+```
 ### Dynamic Model Creation
 
 ```python
@@ -314,7 +314,7 @@ UserModel = create_dynamic_model(
     }
 )
 
-```text
+```
 ---
 
 ## 5. Integration Patterns
@@ -349,7 +349,7 @@ async def create_user(user: UserCreate):
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=str(e))
 
-```text
+```
 ### Database Integration
 
 ```python
@@ -380,7 +380,7 @@ def get_user(db: Session, user_id: int) -> UserSchema:
     db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
     return UserSchema.from_orm(db_user)
 
-```text
+```
 ---
 
 ## Testing
@@ -410,7 +410,7 @@ def test_product_price_validation():
         Product(name="Test", price=-10)
     assert "ensure this value is greater than 0" in str(exc_info.value)
 
-```text
+```
 ---
 
 ## Best Practices
@@ -495,4 +495,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

@@ -183,7 +183,7 @@ metrics = train_and_evaluate_model(
 print(f"RMSE: {metrics['rmse']:.4f}")
 print(f"R²: {metrics['r2']:.4f}")
 
-```text
+```
 ### Custom Training with Existing Data
 
 ```python
@@ -227,7 +227,7 @@ trainer.save_model('models/custom_sarima_model.pkl')
 
 trainer.plot_results()
 
-```text
+```
 ### Loading a Pre-trained Model
 
 ```python
@@ -264,7 +264,7 @@ metrics = trainer.evaluate_model(exog_columns=["lag_1", "lag_5", "rolling_mean_5
 
 trainer.plot_results(save_path='output/plots/new_data_evaluation.png')
 
-```text
+```
 ## Implementation Details
 
 ### Model Types

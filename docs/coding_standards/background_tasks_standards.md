@@ -196,7 +196,7 @@ def process_data(
         retry_delay = self.default_retry_delay * (2 ** self.request.retries)
         raise self.retry(exc=exc, countdown=retry_delay)
 
-```text
+```
 ### Task Chains and Groups
 
 ```python
@@ -255,7 +255,7 @@ def process_urls_with_summary(urls: List[str]):
         summarize_results.s()
     )()
 
-```text
+```
 ---
 
 ## 2. Task Design
@@ -356,7 +356,7 @@ def example_task(
             logging.error(error_msg, exc_info=True)
             return TaskResult.error(error_msg).to_dict()
 
-```text
+```
 ---
 
 ## 3. Task Queue
@@ -495,7 +495,7 @@ class DeadLetterQueue:
 
         )
 
-```text
+```
 ---
 
 ## 4. Task Scheduling
@@ -635,7 +635,7 @@ class SchedulerWorker:
                 )
                 await asyncio.sleep(5)
 
-```text
+```
 ---
 
 ## 5. Task Monitoring
@@ -759,7 +759,7 @@ class TaskMonitor:
             "disk_percent": psutil.disk_usage('/').percent
         }
 
-```text
+```
 ---
 
 ## Best Practices
@@ -854,4 +854,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

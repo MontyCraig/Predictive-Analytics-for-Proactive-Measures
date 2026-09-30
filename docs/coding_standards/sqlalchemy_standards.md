@@ -95,7 +95,7 @@ class BaseModel(Base, TimestampMixin, IDMixin):
     def __repr__(self):
         return f"<{self.__class__.__name__}(id={self.id})>"
 
-```text
+```
 ### Model Definition
 
 ```python
@@ -141,7 +141,7 @@ class Post(BaseModel):
         Index('idx_posts_author_created', 'author_id', 'created_at'),
     )
 
-```text
+```
 ---
 
 ## 2. Database Operations
@@ -183,7 +183,7 @@ def create_user(username: str, email: str) -> User:
 
         return user
 
-```text
+```
 ### Query Building
 
 ```python
@@ -217,7 +217,7 @@ class UserRepository:
             User.created_at.desc()
         ).offset(offset).limit(limit).all()
 
-```text
+```
 ---
 
 ## 3. Performance
@@ -256,7 +256,7 @@ class PostRepository:
             User.username
         ).all()
 
-```text
+```
 ### Bulk Operations
 
 ```python
@@ -270,7 +270,7 @@ def bulk_update_posts(posts_updates: List[dict]) -> None:
     with session_scope() as session:
         session.bulk_update_mappings(Post, posts_updates)
 
-```text
+```
 ---
 
 ## 4. Migration Management
@@ -303,7 +303,7 @@ def run_migrations_online():
         with context.begin_transaction():
             context.run_migrations()
 
-```text
+```
 ### Migration Script
 
 ```python
@@ -338,7 +338,7 @@ def downgrade():
     op.drop_index('idx_users_status')
     op.drop_column('users', 'status')
 
-```text
+```
 ---
 
 ## 5. Testing
@@ -373,7 +373,7 @@ def session(engine, tables):
     transaction.rollback()
     connection.close()
 
-```text
+```
 ### Model Tests
 
 ```python
@@ -398,7 +398,7 @@ def test_user_posts_relationship(session):
     assert post in user.posts
     assert post.author == user
 
-```text
+```
 ---
 
 ## Best Practices
@@ -493,4 +493,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

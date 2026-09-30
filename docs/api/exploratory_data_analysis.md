@@ -148,7 +148,7 @@ explorer = TimeSeriesExplorer(data)
 
 explorer.run_full_analysis()
 
-```text
+```
 ### Custom Analysis
 
 ```python
@@ -175,7 +175,7 @@ explorer.plot_seasonal_decomposition(period=7, model='multiplicative')
 
 explorer.plot_heatmap(columns=['open', 'high', 'low', 'close', 'volume'])
 
-```text
+```
 ### Saving Plots
 
 ```python
@@ -196,7 +196,7 @@ explorer = TimeSeriesExplorer(data)
 output_dir = Path('output/eda_results')
 explorer.run_full_analysis(output_dir)
 
-```text
+```
 ## Implementation Details
 
 ### Visualization Techniques

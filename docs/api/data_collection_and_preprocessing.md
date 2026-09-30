@@ -130,7 +130,7 @@ config = get_config()
 
 data = collect_and_preprocess_data(config, symbol="MSFT")
 
-```text
+```
 ### Custom Symbol and Settings
 
 ```python
@@ -145,7 +145,7 @@ config = get_config()
 
 data = collect_and_preprocess_data(config, symbol="AAPL", save=False)
 
-```text
+```
 ### Direct Access to Alpha Vantage Client
 
 ```python
@@ -168,7 +168,7 @@ df = client.get_time_series(
     outputsize="compact"
 )
 
-```text
+```
 ## Implementation Details
 
 ### Preprocessing Steps

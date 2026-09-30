@@ -97,7 +97,7 @@ def app_context(app):
     with app.app_context():
         yield
 
-```text
+```
 ### Test Organization
 
 ```text
@@ -114,7 +114,7 @@ tests/
 ├── conftest.py
 └── pytest.ini
 
-```text
+```
 ---
 
 ## 2. Test Design
@@ -157,7 +157,7 @@ class TestUserService:
             )
         assert "Email already exists" in str(exc_info.value)
 
-```text
+```
 ### Fixtures & Mocking
 
 ```python
@@ -192,7 +192,7 @@ def authenticated_client(client, user_data):
     client.headers = {"Authorization": f"Bearer {token}"}
     return client
 
-```text
+```
 ---
 
 ## 3. Test Coverage
@@ -222,7 +222,7 @@ exclude_lines =
 [html]
 directory = coverage_html
 
-```text
+```
 ### Coverage Checking
 
 ```python
@@ -239,7 +239,7 @@ def test_coverage():
     total = cov.report()
     assert total >= 90, f"Coverage is {total}%, minimum required is 90%"
 
-```text
+```
 ---
 
 ## 4. Test Types
@@ -276,7 +276,7 @@ def test_validate_password():
 
     assert validate_password("SecurePass123") is False
 
-```text
+```
 ### Integration Tests
 
 ```python
@@ -325,7 +325,7 @@ def test_create_user_workflow():
     assert response.status_code == 200
     assert response.json()["username"] == "test_user"
 
-```text
+```
 ### Performance Tests
 
 ```python
@@ -366,7 +366,7 @@ def test_api_endpoint_performance(client):
     assert avg_time < 0.2, f"Average response time {avg_time}s exceeds 0.2s"
     assert max_time < 0.5, f"Maximum response time {max_time}s exceeds 0.5s"
 
-```text
+```
 ---
 
 ## 5. CI/CD Integration
@@ -436,7 +436,7 @@ jobs:
         file: ./coverage.xml
         fail_ci_if_error: true
 
-```text
+```
 ---
 
 ## Best Practices
@@ -531,4 +531,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

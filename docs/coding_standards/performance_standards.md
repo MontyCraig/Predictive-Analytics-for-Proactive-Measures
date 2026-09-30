@@ -70,7 +70,7 @@ A comprehensive guide for optimizing Python applications, focusing on performanc
 
 ### Code Profiling Tools
 
-python
+```python
 import cProfile
 import pstats
 from line_profiler import LineProfiler
@@ -109,7 +109,7 @@ def profile_function(func):
 def expensive_operation():
     return sum(i * i for i in range(1000000))
 
-```text
+```
 ### Memory Profiling
 
 ```python
@@ -149,7 +149,7 @@ def memory_efficient_function(size: int):
     """Memory-efficient version using generator."""
     return sum(i * i for i in range(size))
 
-```text
+```
 ---
 
 ## 2. Code Optimization
@@ -220,7 +220,7 @@ class StringOptimization:
 
         return formatted
 
-```text
+```
 ### Algorithm Optimization
 
 ```python
@@ -261,7 +261,7 @@ class AlgorithmOptimization:
         """Efficient top-k using heap."""
         return heapq.nlargest(k, data)
 
-```text
+```
 ---
 
 ## 3. Concurrency & Parallelism
@@ -317,7 +317,7 @@ class ParallelProcessing:
 
         return [item for sublist in results for item in sublist]
 
-```text
+```
 ---
 
 ## 4. Memory Management
@@ -366,7 +366,7 @@ class CacheManager:
             del self.cache[oldest_key]
         self.cache[key] = value
 
-```text
+```
 ---
 
 ## 5. Performance Testing
@@ -440,7 +440,7 @@ class PerformanceTester:
             )
         }
 
-```text
+```
 ---
 
 ## Best Practices
@@ -535,4 +535,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

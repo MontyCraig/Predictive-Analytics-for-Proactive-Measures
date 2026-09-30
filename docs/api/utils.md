@@ -28,7 +28,7 @@ API Configuration for data sources.
 
 - `alpha_vantage_api_key` (SecretStr): Alpha Vantage API key for market data
 
-- `alpha_vantage_base_url` (str): Base URL for Alpha Vantage API (default: "<https://www.alphavantage.co/query")>
+- `alpha_vantage_base_url` (str): Base URL for Alpha Vantage API (default: "https://www.alphavantage.co/query")
 
 ##### `ModelConfig` (Pydantic BaseModel)
 
@@ -141,7 +141,7 @@ api_key = config.api.alpha_vantage_api_key.get_secret_value()
 model_type = config.model.model_type
 output_dir = config.output_dir
 
-```text
+```
 #### Custom Configuration File
 
 ```python
@@ -157,7 +157,7 @@ if config.model.model_type == "sarima":
     order = config.sarima.order
     seasonal_order = config.sarima.seasonal_order
 
-```text
+```
 ### Logging System
 
 #### Basic Logging
@@ -173,7 +173,7 @@ logger.warning("Warning about potential issues")
 logger.error("Error that occurred during execution")
 logger.critical("Critical error that requires immediate attention")
 
-```text
+```
 #### Custom Logger Setup
 
 ```python
@@ -192,7 +192,7 @@ custom_logger = setup_logging(
 custom_logger.debug("Detailed debugging information")
 custom_logger.info("Processing data for analysis")
 
-```text
+```
 ## Implementation Details
 
 ### Configuration Management

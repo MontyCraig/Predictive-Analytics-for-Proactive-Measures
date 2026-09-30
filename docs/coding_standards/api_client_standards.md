@@ -107,7 +107,7 @@ class APIClient:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
-```text
+```
 ### Resource Organization
 
 ```python
@@ -142,7 +142,7 @@ class Client(APIClient):
         super().__init__(config)
         self.users = UsersResource(self)
 
-```text
+```
 ---
 
 ## 2. Request Handling
@@ -194,7 +194,7 @@ class RequestBuilder:
 
         return request
 
-```text
+```
 ### Retry Logic
 
 ```python
@@ -230,7 +230,7 @@ def make_request(client: httpx.Client, **kwargs):
     response.raise_for_status()
     return response
 
-```text
+```
 ---
 
 ## 3. Response Handling
@@ -269,7 +269,7 @@ class APIResponse(BaseModel):
     error: Optional[ErrorResponse] = None
     meta: Optional[Dict[str, Any]] = None
 
-```text
+```
 ### Response Processing
 
 ```python
@@ -299,7 +299,7 @@ class UserProcessor(ResponseProcessor[User]):
         items = [User(**item) for item in data["items"]]
         return PaginatedResponse(items=items, **data["meta"])
 
-```text
+```
 ---
 
 ## 4. Authentication
@@ -350,7 +350,7 @@ class BearerAuth(AuthHandler):
             raise ValueError("No refresh token available")
         # Implement token refresh logic here
 
-```text
+```
 ---
 
 ## 5. Advanced Features
@@ -400,7 +400,7 @@ class AsyncAPIClient:
                 break
             page += 1
 
-```text
+```
 ### Caching
 
 ```python
@@ -458,7 +458,7 @@ def cached(ttl: int = 300):
         return wrapper
     return decorator
 
-```text
+```
 ---
 
 ## Best Practices
@@ -553,4 +553,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

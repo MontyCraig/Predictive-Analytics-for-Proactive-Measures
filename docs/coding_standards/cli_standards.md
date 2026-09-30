@@ -94,7 +94,7 @@ cli_project/
 ├── README.md
 └── CHANGELOG.md
 
-```text
+```
 ### Command Organization
 
 ```python
@@ -132,7 +132,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-```text
+```
 ---
 
 ## 2. CLI Framework
@@ -214,7 +214,7 @@ def list(
         console.print(f"Error: {str(e)}", style="red")
         raise typer.Exit(1)
 
-```text
+```
 ### Input Validation
 
 ```python
@@ -260,7 +260,7 @@ def create(
 ):
     pass
 
-```text
+```
 ---
 
 ## 3. User Experience
@@ -304,7 +304,7 @@ def process_data(file: Path):
     process_file(file)
     console.print("✓ Data processed successfully", style="green")
 
-```text
+```
 ### Interactive Features
 
 ```python
@@ -354,7 +354,7 @@ def configure():
     save_config(config)
     console.print("✓ Configuration saved", style="green")
 
-```text
+```
 ---
 
 ## 4. Advanced Features
@@ -403,7 +403,7 @@ def save_config(config: Dict[str, Any], config_path: Optional[Path] = None):
     with config_path.open("wb") as f:
         tomli_w.dump(config, f)
 
-```text
+```
 ### Plugin System
 
 ```python
@@ -448,7 +448,7 @@ class PluginManager:
             raise ValueError(f"Plugin not found: {name}")
         return self.plugins[name]
 
-```text
+```
 ---
 
 ## 5. Testing
@@ -504,7 +504,7 @@ def test_list_users_format(format):
     )
     assert result.exit_code == 0
 
-```text
+```
 ---
 
 ## Best Practices
@@ -599,4 +599,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

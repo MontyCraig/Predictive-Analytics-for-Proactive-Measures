@@ -15,204 +15,126 @@ Predictive Analytics for Proactive Measures is a comprehensive machine learning 
 
 ## Directory Structure
 
-```
+```text
 Predictive-Analytics-for-Proactive-Measures/
-├── docs/                                    # Comprehensive documentation
-│   ├── index.md                            # Documentation home
-│   ├── roadmap.md                          # Development roadmap
-│   ├── Predictive_Analytics_for_Proactive_Measures.md
-│   ├── Data_Collection_and_Preprocessing.md
-│   ├── Identifying_Potential_Disruptions.md
-│   ├── Model_Selection_and_Training.md
-│   ├── Forecasting_and_Prediction.md
-│   ├── Integrating_Results_into_Business_Strategy.md
-│   ├── Train-Test_Split.md
-│   └── Import_Necessary_Libraries.md
-├── examples/                                # Usage examples
-│   └── README.md                           # Examples documentation
-├── src/                                     # Source code (if structured)
-├── main.py                                  # Main application entry
-├── model_selection_and_training.py          # ML model training
-├── feature_engineering.py                   # Feature creation and selection
-├── data_preprocessing.py                    # Data cleaning and prep (implied)
-├── forecasting.py                           # Prediction generation (implied)
-├── .git/                                    # Git repository
-├── .github/                                 # GitHub workflows
-├── README.md                                # Project overview
-├── requirements.txt                         # Python dependencies
-└── CLAUDE.md                                # This documentation
+├── src/predictive_analytics/      # Installable package (src layout)
+│   ├── cli.py                     # Typer CLI behind the `predictive-analytics` command
+│   ├── __main__.py                # Enables `python -m predictive_analytics`
+│   ├── collection/                # Alpha Vantage client and data preprocessing
+│   ├── analysis/                  # Exploratory time-series analysis
+│   ├── modeling/                  # Model training and forecasting
+│   ├── disruption/                # Disruption / anomaly identification
+│   ├── config/                    # Pydantic v2 settings and logging setup
+│   ├── utils/                     # General-purpose helpers
+│   ├── exceptions.py              # Exception hierarchy
+│   └── types.py                   # Shared type definitions
+├── tests/                         # pytest suite (CI enforces 100% coverage)
+├── docs/                          # API reference, guides, coding standards, roadmap
+├── examples/                      # Usage examples
+├── .github/workflows/             # Lint, Tests and Security workflows
+├── pyproject.toml                 # Package metadata, dependencies, tool configuration
+├── .env-example                   # Template for environment configuration
+├── README.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── SECURITY.md
+├── LICENSE                        # Apache License 2.0
+└── CLAUDE.md                      # This documentation
 ```
 
 ## Key Components
 
-### Core Modules
+### Package Modules
 
-#### main.py
-- Application orchestration
-- Pipeline coordination
-- Configuration management
-- Execution flow control
+| Module | Main public objects | Responsibility |
+|---|---|---|
+| `collection/client.py` | `AlphaVantageClient`, `TimeSeriesData` | Fetch market time series from Alpha Vantage |
+| `collection/preprocessing.py` | `collect_and_preprocess_data`, `preprocess_data` | Clean and prepare collected data |
+| `analysis/explorer.py` | `TimeSeriesExplorer`, `load_data` | Exploratory data analysis |
+| `modeling/trainer.py` | `ModelTrainer`, `train_and_evaluate_model` | Train and evaluate SARIMA, Prophet, Auto ARIMA and Exponential Smoothing models |
+| `modeling/forecaster.py` | `TimeSeriesForecaster`, `generate_forecast` | Generate forecasts with confidence bounds from saved models |
+| `disruption/analyzer.py` | `DisruptionAnalyzer`, `analyze_disruptions` | Identify potential disruptions in forecasts |
+| `config/settings.py` | `AppConfig`, `get_config`, per-model config classes | Pydantic v2 settings from environment variables / `.env` |
+| `cli.py` | `app` | Command-line pipeline orchestration |
 
-#### data_preprocessing.py
-- Data cleaning and validation
-- Missing value handling
-- Outlier detection and treatment
-- Data normalization/standardization
-- Time series preparation
-
-#### feature_engineering.py
-- Feature extraction from raw data
-- Feature selection algorithms
-- Dimensionality reduction
-- Domain-specific feature creation
-- Feature importance analysis
-
-#### model_selection_and_training.py
-- Model selection frameworks
-- Hyperparameter tuning
-- Cross-validation
-- Model training pipelines
-- Performance evaluation
-- Model persistence
-
-#### forecasting.py
-- Prediction generation
-- Confidence interval calculation
-- Multi-step ahead forecasting
-- Ensemble predictions
-- Result aggregation
+The package root re-exports `AlphaVantageClient`, `AppConfig`, `DisruptionAnalyzer`, `ModelTrainer`, `TimeSeriesExplorer` and `TimeSeriesForecaster`.
 
 ### Documentation
 
-#### Core Concepts
-- **Predictive Analytics Overview**: Introduction to predictive modeling
-- **Data Collection**: Sources, methods, and best practices
-- **Preprocessing**: Cleaning, transformation, and preparation
-- **Disruption Identification**: Pattern recognition for early warnings
-- **Model Selection**: Choosing appropriate algorithms
-- **Forecasting**: Generation and interpretation of predictions
-- **Business Integration**: Actionable insights and implementation
+- `docs/api/` - module-level API reference
+- `docs/guides/` - installation, basic usage and Prophet guides
+- `docs/coding_standards/` - Python, CLI, packaging and framework coding standards
+- `docs/roadmap.md` - development roadmap
 
 ## Dependencies
 
-### Python Requirements
-```
-# Core ML libraries
-scikit-learn>=1.0.0          # Machine learning algorithms
-pandas>=1.5.0                # Data manipulation
-numpy>=1.20.0                # Numerical computing
-
-# Visualization
-matplotlib>=3.5.0            # Plotting
-seaborn>=0.11.0              # Statistical visualization
-plotly>=5.0.0                # Interactive visualizations
-
-# Time series
-statsmodels>=0.13.0          # Statistical models
-prophet>=1.0                 # Time series forecasting
-
-# Deep learning (optional)
-tensorflow>=2.10.0           # Neural networks
-keras>=2.10.0                # High-level neural network API
-
-# Utilities
-joblib>=1.1.0                # Model serialization
-pyyaml>=6.0                  # Configuration files
-```
+Runtime and development dependencies are declared in `pyproject.toml`; there is no `requirements.txt`. Core runtime libraries: numpy, pandas, scipy, scikit-learn, statsmodels, prophet, pmdarima, matplotlib, seaborn, pydantic and pydantic-settings, python-dotenv, requests, typer, rich, tqdm and joblib. The `dev` extra adds the test, lint and type-checking tools used in CI.
 
 ### System Requirements
-- Python 3.8+ (3.11+ recommended)
-- 8GB+ RAM for model training
-- Multi-core CPU for parallel processing
-- GPU optional but beneficial for deep learning models
+- Python 3.10+ (`requires-python = ">=3.10"`)
+- An Alpha Vantage API key (`ALPHA_VANTAGE_API_KEY`), required by the configuration even when stages are skipped
+- 8GB+ RAM recommended for model training
 
 ## Installation
 
 ```bash
+git clone https://github.com/MontyCraig/Predictive-Analytics-for-Proactive-Measures.git
 cd Predictive-Analytics-for-Proactive-Measures
 
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
+# Inside an isolated Python 3.10+ environment
+pip install -e ".[dev]"
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Verify installation
-python -c "import sklearn, pandas, numpy; print('Installation successful')"
+# Verify the CLI is installed
+predictive-analytics --help
 ```
 
 ## Usage
 
-### Basic Workflow
-
-#### 1. Data Collection and Preprocessing
-```python
-from data_preprocessing import DataPreprocessor
-
-# Initialize preprocessor
-preprocessor = DataPreprocessor()
-
-# Load and clean data
-data = preprocessor.load_data('data/historical.csv')
-cleaned_data = preprocessor.clean(data)
-normalized_data = preprocessor.normalize(cleaned_data)
-```
-
-#### 2. Feature Engineering
-```python
-from feature_engineering import FeatureEngineer
-
-# Create features
-engineer = FeatureEngineer()
-features = engineer.create_features(normalized_data)
-selected_features = engineer.select_features(features, target='disruption')
-```
-
-#### 3. Model Training
-```python
-from model_selection_and_training import ModelTrainer
-
-# Train models
-trainer = ModelTrainer()
-models = trainer.train_multiple_models(selected_features, target)
-best_model = trainer.select_best_model(models)
-trainer.save_model(best_model, 'models/best_model.pkl')
-```
-
-#### 4. Forecasting
-```python
-from forecasting import Forecaster
-
-# Generate predictions
-forecaster = Forecaster(model=best_model)
-predictions = forecaster.predict(new_data, horizon=30)
-confidence_intervals = forecaster.confidence_intervals(predictions)
-```
-
-#### 5. Integration into Business Strategy
-```python
-from business_integration import StrategyIntegrator
-
-# Generate actionable insights
-integrator = StrategyIntegrator()
-recommendations = integrator.generate_recommendations(predictions)
-integrator.create_report(recommendations, output='report.pdf')
-```
-
 ### Command-Line Usage
+
+The CLI exposes a single pipeline command, invoked directly as `predictive-analytics` (there is no `run` subcommand):
+
 ```bash
-# Run full pipeline
-python main.py --data data/historical.csv --output predictions.csv
+# Full pipeline for one symbol; the API key is read from ALPHA_VANTAGE_API_KEY or a .env file
+export ALPHA_VANTAGE_API_KEY=YOUR_API_KEY
+predictive-analytics --symbol MSFT
 
-# Train models only
-python main.py --mode train --config config.yaml
+# Skip individual stages
+predictive-analytics --symbol AAPL --skip-collection --skip-eda
 
-# Generate predictions from trained model
-python main.py --mode predict --model models/best_model.pkl --input new_data.csv
+# Custom forecast horizon (1-365) and output directory (default ./output/<SYMBOL>)
+predictive-analytics --symbol GOOG --forecast-steps 60 --output-dir ./results
 
-# Evaluate model performance
-python main.py --mode evaluate --model models/best_model.pkl --test-data test.csv
+# Equivalent module invocation
+python -m predictive_analytics --symbol MSFT
+```
+
+Other options: `--env-file` (load a specific `.env`), `--skip-training`, `--skip-forecasting`, `--skip-disruptions`, `--show-plots`.
+
+Note: `--api-key` is accepted but is not currently passed to the pipeline configuration, so set `ALPHA_VANTAGE_API_KEY` (or use `--env-file`) instead.
+
+### Python API
+
+```python
+from predictive_analytics import ModelTrainer
+from predictive_analytics.collection.preprocessing import collect_and_preprocess_data
+from predictive_analytics.config.settings import get_config
+from predictive_analytics.modeling.forecaster import generate_forecast
+
+config = get_config()  # environment variables / .env
+
+data = collect_and_preprocess_data(config, symbol="MSFT")
+
+trainer = ModelTrainer(config, data=data, target_column="close")
+trainer.split_data()
+trainer.train_sarima_model()
+metrics = trainer.evaluate_model()  # mae, mape, mse, r2, rmse
+trainer.save_model("models/sarima_msft.pkl")
+
+# Without model_path, the newest saved <model_type>_*.pkl in the model directory is used
+forecast_df = generate_forecast(
+    config, model_path="models/sarima_msft.pkl", steps=30, target_column="close"
+)  # columns: forecast, lower_bound, upper_bound
 ```
 
 ## Integration Use Cases
@@ -253,6 +175,8 @@ python main.py --mode evaluate --model models/best_model.pkl --test-data test.cs
 
 ## Model Selection Guide
 
+General modelling guidance. The package itself implements SARIMA, Prophet, Auto ARIMA and Exponential Smoothing (`ModelTrainer.train_*_model`); the other model families below are not provided.
+
 ### Time Series Models
 - **ARIMA**: Seasonal patterns, stationary data
 - **Prophet**: Strong seasonality, holidays, trend changes
@@ -275,37 +199,22 @@ python main.py --mode evaluate --model models/best_model.pkl --test-data test.cs
 
 ## Common Commands
 
-### Data Preparation
+### Pipeline
 ```bash
-# Clean and prepare data
-python data_preprocessing.py --input raw_data.csv --output clean_data.csv
-
-# Generate features
-python feature_engineering.py --input clean_data.csv --output features.csv
-
-# Split train/test
-python scripts/train_test_split.py --input features.csv --test-size 0.2
+predictive-analytics --symbol MSFT                       # full pipeline
+predictive-analytics --symbol MSFT --skip-collection     # reuse previously collected data
+predictive-analytics --symbol MSFT --forecast-steps 90   # longer forecast horizon
 ```
 
-### Model Operations
+### Development (mirrors the CI workflows)
 ```bash
-# Train models
-python model_selection_and_training.py --train-data train.csv --models all
-
-# Hyperparameter tuning
-python model_selection_and_training.py --tune --model xgboost --cv 5
-
-# Evaluate model
-python scripts/evaluate.py --model models/best_model.pkl --test-data test.csv
-```
-
-### Forecasting
-```bash
-# Generate forecasts
-python forecasting.py --model models/best_model.pkl --horizon 30 --output forecasts.csv
-
-# Batch predictions
-python forecasting.py --batch --input-dir new_data/ --output-dir predictions/
+black --check src/ tests/
+isort --check-only src/ tests/
+flake8 --max-line-length=99 --extend-ignore=E203,W503 src/ tests/
+mypy src/
+pylint src/predictive_analytics/   # CI disables some checks; see .github/workflows/lint.yml
+pytest --cov-fail-under=100
+bandit -r src/ -c pyproject.toml
 ```
 
 ## Troubleshooting
@@ -336,10 +245,11 @@ model = RandomForestClassifier(n_jobs=-1)  # Use all cores
 # Reduce data size for prototyping
 train_sample = train_data.sample(frac=0.1)
 
-# Use incremental learning
+# Use incremental learning (classifiers need the full label set on the first call)
+import numpy as np
 from sklearn.linear_model import SGDClassifier
 model = SGDClassifier()
-model.partial_fit(X_batch, y_batch)
+model.partial_fit(X_batch, y_batch, classes=np.unique(y_all))
 ```
 
 ## Security Considerations
@@ -368,5 +278,5 @@ model.partial_fit(X_batch, y_batch)
 
 ---
 
-*Last Updated: November 5, 2025*
+*Last Updated: September 30, 2026*
 *Status: Active development and deployment*

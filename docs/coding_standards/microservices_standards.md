@@ -140,7 +140,7 @@ class MicroService(ServiceBase):
             "dependencies": self.dependencies_status
         }
 
-```text
+```
 ### API Design
 
 ```python
@@ -214,7 +214,7 @@ async def get_user(
             detail=str(e)
         )
 
-```text
+```
 ---
 
 ## 2. Implementation
@@ -249,7 +249,7 @@ microservice/
 ├── pyproject.toml
 └── README.md
 
-```text
+```
 ### Service Implementation
 
 ```python
@@ -324,7 +324,7 @@ class UserService:
 
         return user.to_dict()
 
-```text
+```
 ---
 
 ## 3. Infrastructure
@@ -363,7 +363,7 @@ ENV PYTHONPATH=/app
 
 CMD ["uvicorn", "src.service_name.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
-```text
+```
 ```yaml
 
 # docker-compose.yml
@@ -391,7 +391,7 @@ services:
       - kafka
 
     healthcheck:
-      test: ["CMD", "curl", "-f", "<http://localhost:8000/health"]>
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -429,7 +429,7 @@ volumes:
   postgres_data:
   redis_data:
 
-```text
+```
 ---
 
 ## 4. Resilience
@@ -492,7 +492,7 @@ class ExternalService:
             async with session.get(url) as response:
                 return await response.json()
 
-```text
+```
 ### Rate Limiting
 
 ```python
@@ -563,7 +563,7 @@ class APIRateLimiter:
 
         return await call_next(request)
 
-```text
+```
 ---
 
 ## 5. Operations
@@ -669,7 +669,7 @@ class LoggingMiddleware:
             )
             raise e
 
-```text
+```
 ---
 
 ## Best Practices
@@ -764,4 +764,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

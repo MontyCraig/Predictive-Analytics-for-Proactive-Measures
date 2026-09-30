@@ -100,7 +100,7 @@ def create_app(config_name):
 
     return app
 
-```text
+```
 ### Project Layout
 
 ```text
@@ -121,7 +121,7 @@ flask_project/
 ├── migrations/
 └── wsgi.py
 
-```text
+```
 ### Configuration Management
 
 ```python
@@ -175,7 +175,7 @@ config = {
     'default': DevelopmentConfig
 }
 
-```text
+```
 ---
 
 ## 2. Application Design
@@ -207,7 +207,7 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user)
 
-```text
+```
 ### Forms & Validation
 
 ```python
@@ -242,7 +242,7 @@ def login():
         flash('Invalid email or password.')
     return render_template('auth/login.html', form=form)
 
-```text
+```
 ---
 
 ## 3. Security
@@ -279,7 +279,7 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-```text
+```
 ### Security Headers
 
 ```python
@@ -297,7 +297,7 @@ def create_app(config_name):
         'style-src': ["'self'", "'unsafe-inline'"]
     })
 
-```text
+```
 ---
 
 ## 4. Performance
@@ -330,7 +330,7 @@ def get_users():
     users = User.query.all()
     return render_template('users.html', users=users)
 
-```text
+```
 ### Database Optimization
 
 ```python
@@ -353,7 +353,7 @@ class Post(db.Model):
             db.joinedload('user')
         ).filter_by(user_id=user_id).all()
 
-```text
+```
 ---
 
 ## 5. Testing
@@ -385,7 +385,7 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
-```text
+```
 ### Unit Tests
 
 ```python
@@ -406,7 +406,7 @@ def test_password_verification():
     assert u.verify_password('cat')
     assert not u.verify_password('dog')
 
-```text
+```
 ---
 
 ## CLI Commands
@@ -432,7 +432,7 @@ def init_db_command():
 def init_app(app):
     app.cli.add_command(init_db_command)
 
-```text
+```
 ---
 
 ## Error Handling
@@ -454,7 +454,7 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template('500.html'), 500
 
-```text
+```
 ---
 
 ## Documentation
@@ -484,7 +484,7 @@ class UserList(Resource):
         """List all users"""
         return User.query.all()
 
-```text
+```
 ---
 
 ## Conclusion
@@ -515,6 +515,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
-
-```text
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

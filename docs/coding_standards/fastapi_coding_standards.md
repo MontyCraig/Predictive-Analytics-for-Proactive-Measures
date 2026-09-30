@@ -92,7 +92,7 @@ fastapi_project/
 ├── main.py
 └── requirements.txt
 
-```text
+```
 ### Application Configuration
 
 ```python
@@ -105,7 +105,7 @@ from typing import Optional, Dict, Any
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "FastAPI Project"
-    BACKEND_CORS_ORIGINS: list[str] = ["<http://localhost:3000"]>
+    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:3000"]
 
     POSTGRES_SERVER: str
     POSTGRES_USER: str
@@ -118,7 +118,7 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-```text
+```
 ### Dependencies Management
 
 ```python
@@ -151,7 +151,7 @@ async def get_current_user(
         )
     return user
 
-```text
+```
 ---
 
 ## 2. API Design
@@ -171,7 +171,7 @@ api_router.include_router(auth.router, tags=["authentication"])
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(items.router, prefix="/items", tags=["items"])
 
-```text
+```
 ### Path Operations
 
 ```python
@@ -218,7 +218,7 @@ async def create_user(
     user = await crud.user.create(db, obj_in=user_in)
     return user
 
-```text
+```
 ---
 
 ## 3. Data Validation
@@ -256,7 +256,7 @@ class User(UserInDBBase):
 class UserInDB(UserInDBBase):
     hashed_password: str
 
-```text
+```
 ### Custom Validators
 
 ```python
@@ -288,7 +288,7 @@ class ItemCreate(BaseModel):
                 raise ValueError('Tax cannot be greater than price')
         return v
 
-```text
+```
 ---
 
 ## 4. Security
@@ -327,7 +327,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
-```text
+```
 ### Middleware Configuration
 
 ```python
@@ -353,7 +353,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-```text
+```
 ---
 
 ## 5. Performance
@@ -385,7 +385,7 @@ async def get_async_session() -> AsyncSession:
     async with AsyncSessionLocal() as session:
         yield session
 
-```text
+```
 ### Background Tasks
 
 ```python
@@ -412,7 +412,7 @@ async def create_item(
     )
     return item
 
-```text
+```
 ### Caching
 
 ```python
@@ -437,7 +437,7 @@ async def read_items(
     items = await crud.item.get_multi(db, skip=skip, limit=limit)
     return items
 
-```text
+```
 ---
 
 ## Testing
@@ -469,7 +469,7 @@ def client() -> Generator:
 def superuser_token_headers(client: TestClient) -> Dict[str, str]:
     return get_superuser_token_headers(client)
 
-```text
+```
 ### API Tests
 
 ```python
@@ -497,7 +497,7 @@ def test_create_user(
     assert content["email"] == data["email"]
     assert content["full_name"] == data["full_name"]
 
-```text
+```
 ---
 
 ## Documentation
@@ -531,7 +531,7 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
-```text
+```
 ---
 
 ## Conclusion
@@ -564,4 +564,4 @@ Remember to:
 
 ## License
 
-This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at <http://www.apache.org/licenses/LICENSE-2.0.>
+This document is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at http://www.apache.org/licenses/LICENSE-2.0.

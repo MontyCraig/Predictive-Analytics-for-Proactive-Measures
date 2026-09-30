@@ -172,7 +172,7 @@ forecast_df = generate_forecast(
     target_column="close"
 )
 
-```text
+```
 ### Customized Forecasting
 
 ```python
@@ -218,7 +218,7 @@ print(f"Average daily change: {metrics['avg_daily_change']:.4f}")
 print(f"Growth rate: {metrics['growth_rate_pct']:.2f}%")
 print(f"Volatility: {metrics['volatility']:.4f}")
 
-```text
+```
 ### Anomaly Detection
 
 ```python
@@ -257,7 +257,7 @@ anomalies_df = forecaster.detect_anomalies(
 uncertain_periods = anomalies_df[anomalies_df["is_uncertain"]]
 print(f"Detected {len(uncertain_periods)} periods with high uncertainty")
 
-```text
+```
 ## Implementation Details
 
 ### Forecast Generation
