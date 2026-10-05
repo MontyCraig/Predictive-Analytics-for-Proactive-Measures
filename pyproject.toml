@@ -54,7 +54,7 @@ Documentation = "https://github.com/MontyCraig/Predictive-Analytics-for-Proactiv
 [project.optional-dependencies]
 dev = [
   "pytest==8.3.4",
-  "pytest-cov==6.1.1",
+  "pytest-cov==7.1.0",
   "pytest-mock==3.14.0",
   "hypothesis==6.151.9",
   "mypy==1.14.1",
